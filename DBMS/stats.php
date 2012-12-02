@@ -76,16 +76,19 @@
               <tr>
                 <th>Top Categories</th>
               </tr>
+              <tr id="categoryLoadingIndicator">
+                <td><img src="img/loading-indicator.gif"/></td>
+              </tr>
 							<tr class="tableRow" id="refCategory">
 								<td>
 									<table class="cellSkeleton">
 										<!-- <thead><th/><th/><th/><th/></thead> -->
-										<col width="100">
+										<col width="200">
                     <col width="100">
                     <col width="100">
 										<tbody>
 											<tr class="catDesc">
-												<td class="skeletonCol catName" colspan="4"><a href="" class="catLink">&lt;Category Name&gt;</a></td>
+												<td class="skeletonCol catName"><a href="" class="catLink">&lt;Category Name&gt;</a></td>
 												<td class="skeletonCol catThreadsCount">50 threads</td>
 												<td class="skeletonCol createdBy">created by:&nbsp;<span class="createdBySpan"></span></td>											
 											</tr>
@@ -96,21 +99,97 @@
 						</tbody>
             
             <tbody>
-              <tr>
+              <tr style="display: none;">
                 <th>Top Posts</th>
               </tr>
 							<tr class="tableRow" id="refPost">
 								<td>
 									<table class="cellSkeleton">
 										<!-- <thead><th/><th/><th/><th/></thead> -->
-										<col width="100">
+										<col width="200">
                     <col width="100">
                     <col width="100">
 										<tbody>
 											<tr class="postDesc">
-												<td class="skeletonCol postName" colspan="4"><a href="" class="postLink">&lt;Category Name&gt;</a></td>
+												<td class="skeletonCol postName"><a href="" class="postLink">&lt;Category Name&gt;</a></td>
 												<td class="skeletonCol postVoteCount">50 votes</td>
 												<td class="skeletonCol createdBy">created by:&nbsp;<span class="createdBySpan"></span></td>											
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+            
+            <tbody>
+              <tr>
+                <th>Top Threads by View</th>
+              </tr>
+              <tr id="threadViewLoadingIndicator">
+                <td><img src="img/loading-indicator.gif"/></td>
+              </tr>
+							<tr class="tableRow" id="refThreadView">
+								<td>
+									<table class="cellSkeleton">
+										<!-- <thead><th/><th/><th/><th/></thead> -->
+										<col width="200">
+                    <col width="100">
+                    <col width="100">
+										<tbody>
+											<tr class="threadDesc">
+												<td class="skeletonCol threadName"><a href="" class="threadLink">&lt;Thread Name&gt;</a></td>
+												<td class="skeletonCol threadViewCount">50 views</td>
+												<td class="skeletonCol createdBy">created by:&nbsp;<span class="createdBySpan"></span></td>											
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+            
+            <tbody>
+              <tr>
+                <th>Top Threads by Vote</th>
+              </tr>
+              <tr id="threadVoteLoadingIndicator">
+                <td><img src="img/loading-indicator.gif"/></td>
+              </tr>
+							<tr class="tableRow" id="refThreadVote">
+								<td>
+									<table class="cellSkeleton">
+										<col width="200">
+                    <col width="100">
+                    <col width="100">
+										<tbody>
+											<tr class="threadDesc">
+												<td class="skeletonCol threadName"><a href="" class="threadLink">&lt;Thread Name&gt;</a></td>
+												<td class="skeletonCol threadVoteCount">50 votes</td>
+												<td class="skeletonCol createdBy">created by:&nbsp;<span class="createdBySpan"></span></td>											
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+            
+            <tbody>
+              <tr>
+                <th>Top Users by Posts</th>
+              </tr>
+              <tr id="userLoadingIndicator">
+                <td><img src="img/loading-indicator.gif"/></td>
+              </tr>
+							<tr class="tableRow" id="refUser">
+								<td>
+									<table class="cellSkeleton">
+										<col width="150">
+                    <col width="150">
+                    <col width="100">
+										<tbody>
+											<tr class="userDesc">
+                        <td class="skeletonCol userLoginName">&lt;User Name&gt;</td>
+												<td class="skeletonCol userName">&lt;User Name&gt;</td>
+												<td class="skeletonCol userPostCount">50 posts</td>
 											</tr>
 										</tbody>
 									</table>
