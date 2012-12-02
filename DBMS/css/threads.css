@@ -1,0 +1,583 @@
+body
+{
+	font-family: "lucida grande", tahoma, verdana, arial, sans-serif !important; 
+}
+
+
+
+#ref
+{
+	display: none;
+}
+
+
+#contentPane
+{
+	/*To hide scroll bars in mozilla*/
+	overflow: hidden !important; 
+}
+
+td
+{
+	word-wrap: break-word !important;
+	
+}
+
+span
+{
+	white-space: pre-wrap !important;
+}
+
+table
+{
+	table-layout:fixed;
+}
+
+#content_container
+{
+	margin-top: 100px;
+	padding-right: 5px;
+	padding-left: 5px;
+	
+}
+
+#contentPane
+{
+	overflow : scroll;
+	margin-left: 20px;
+	padding: 0;
+
+}
+
+#sidebar{
+}
+
+
+#rightPane
+{
+
+	margin-left: 10px;
+	right: 10px;
+	background-color: #f7f7f7;
+	
+
+}
+
+td 
+{
+	border: 0px !important;
+}
+
+
+
+.views_col
+{
+
+}
+
+.inner_table
+{
+	margin-bottom: 0px;
+
+}
+
+.created_col 
+{
+	
+	width: 45%;
+	text-align: right !important;
+}
+
+.created_by_col
+{
+	
+	width: 45%;
+	text-align: right !important;
+}
+
+.thread_info_row
+{
+}
+
+.thread_content_div
+{
+	white-space: pre-wrap;
+	font-size: 12px;
+}
+
+.delete_button_cell
+{
+	text-align: right !important;
+	padding: 0px !important;
+	padding-right: 2px !important;
+	width: 2%;
+}
+
+.inner_table:hover
+{
+
+}
+
+
+
+
+.thread_title_row
+{
+}
+
+.thread_content_row
+{
+}
+
+#loggedUser
+{
+	display: inline;
+}
+
+
+
+
+.ratings_col1
+{
+	width: 5%;
+	vertical-align: top !important;
+}
+/*.ratings_col
+{
+	width: 20%;
+	vertical-align: top;
+}
+*/
+#ddiv
+{
+	text-align: center;
+	vertical-align: middle;
+	
+}
+
+.mybadge
+{
+	padding: 5px;
+	margin-top: 5px !important;
+	font-weight: bold;
+	
+
+}
+
+.inner_div:first-child
+{
+}
+
+.inner_div
+{
+	background-color: whiteSmoke;
+
+
+}
+
+.inner_div:hover
+{
+	box-shadow: inset 0 0 5px #888;
+}
+
+
+.thread_title_row
+{
+}
+
+.thread_info_row
+{
+	/*	border-top: 1px solid lightgrey !important;*/
+	font-size: 11px;
+	color: gray;
+	padding: 0px !important;
+	
+	
+}
+
+td.views_col, td.created_by_col, td.created_col, p
+{
+	/*	padding: 1px;*/
+	margin: 0;
+}
+
+.tagsRow
+{
+	/*	border-top: 1px solid lightgrey !important;*/
+}
+
+
+.tag
+{
+	font-size: 11px;
+	font-weight: normal !important;
+	margin-left: 1px !important;
+}
+
+
+
+.alert
+{
+	font-weight: bold;
+	text-align: center !important;
+	background-color: #ffebe8 !important;
+	color: #3b5998;
+}
+
+.created_by_lbl, .date_creted_lbl
+{
+	text-align: left;
+}
+
+.thread_title_col
+{
+	/*	border-bottom: 1px solid lightgray !important;*/
+}
+
+
+.thread_title_div
+{
+	font-weight: bold;
+}
+
+#myGroupModal
+{
+	position: relative;
+	background-color: white;
+	padding: 10px;
+	opacity: 1;
+	top: 60px;
+	width: 60%;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+	
+}
+
+#mfooter
+{
+	text-align: right;
+	padding: 10px;
+	margin: 10px;
+	border-top: 1px solid lightgray;
+}
+
+#modalTable
+{
+}
+
+#modalRow
+{
+	/*	height: 400px;*/
+}
+
+.bcol
+{
+	width: 5%;
+	padding: 10px;
+}
+
+.uname
+{
+	width: 95%;
+	padding: 10px;
+}
+
+
+
+
+.userblk
+{
+	padding: 2px;
+	margin: 1px;
+	background-color: #eceff6;
+}
+
+.userSelected
+{
+	background-color: #d4dae8;
+	padding: 3px;
+	margin: 2px;
+}
+
+.userRemoved
+{
+	
+	background-color: #eceff6;
+	padding: 3px;
+	margin: 2px;
+	
+}
+
+
+
+
+#requestContainer
+{
+	/*	border: 1px solid black;
+	z-index: 9999999;
+	width: 100%;
+	*/
+	position: absolute;
+	display: none;
+	z-index: 999999 !important;
+	background-color: black;
+	text-align: center;
+
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+
+
+}
+
+
+#requestsModal
+{
+	position: relative;
+	background-color: white;
+	display: inline-block;
+	margin-top: 50px;
+	margin-bottom: 50px;
+	width: 60%;
+	max-height: 80%;
+	opacity: 1.0;
+
+
+
+}
+
+
+#requestModalHeader
+{
+	padding: 10px;
+	border-bottom: 1px solid lightgray;
+}
+
+
+table.reqTable
+{
+	margin: 1%;
+	width: 98%;
+	
+}
+
+
+#requestModalBody
+{
+	
+	overflow: auto;
+	max-height: 500px;	
+}
+
+
+
+#requestModalFooter
+{
+	padding: 10px;
+	border-top: 1px solid lightgray;
+	background-color: white;
+}
+
+
+tr.reqRow
+{
+	vertical-align: top;
+	text-align: left;
+	background-color: whiteSmoke;
+	border: 2px solid white;
+
+}
+tr.reqRow:hover
+{
+	background-color: #d4dae8;
+	box-shadow: inset 0 0 5px #d4dae8;
+	
+}
+
+.memberNameClass
+{
+	display: block;
+	padding: 5px;
+	margin: 1px;
+	background-color: #eceff6;
+	text-align: left;
+
+
+}
+
+
+thead.reqHeaders
+{
+	text-align: left;
+	background-color: whiteSmoke;
+}
+
+.rightAlignClass
+{
+	text-align: center !important;
+}
+
+.nameCol, .requesterCol, .membersCol, th
+{
+	padding: 10px;
+}
+
+
+.alertPopUp
+{
+	border: 1px solid #e2c822;  
+	background-color: gray;
+	padding: 5px;
+	margin: 5px;
+	background-color: #fff9d7;
+	text-align: center;
+}
+
+
+
+#grpReqMembersLbl
+{
+	padding: 10px;
+	margin: 10px;
+	text-align: left;
+	background-color: #f7f7f7;
+}
+
+
+#mheader
+{
+	padding: 10px;
+	margin: 10px;
+	border-bottom: 1px solid lightgray;
+	font-weight: bold;
+	font-size: 13px;
+}
+
+#mbody
+{
+	padding: 10px;
+	margin: 10px;
+	max-height: 300px;
+	overflow: auto;
+}
+
+.reqMemberRow
+{
+	margin: 5px;
+	padding: 10px;
+	border: 1px solid white;
+}
+
+
+#newgroupTitle
+{
+	margin: 10px;
+	padding: 5px;
+}
+
+
+.grpReqAlert
+{
+	font-weight: bold;
+	font-size: 14px;
+	background-color: whiteSmoke;
+	padding: 10px;
+	margin: 10px;
+	text-align: center;
+	display: none;
+}
+
+div.error
+{
+	background-color: #ffebe8;
+	
+}
+
+div.success
+{
+	background-color: #fff9d7;
+
+	
+}
+
+
+
+/*CSS sort for drop down */
+
+#sortLinks
+{
+	text-align: right !important;
+}
+
+
+.sortList
+{
+	list-style: none;
+	text-decoration: none;
+	text-align: right;
+	display: inline-block;
+}
+.sortList:hover
+{
+	text-decoration: none;
+}
+
+..dropdown:hover
+{
+	text-decoration: none !important;
+}
+
+.dropdown
+{
+	text-decoration: none !important;
+	text-align: right;
+	display: inline-block;
+}
+th
+{
+	border: 0px !important;
+}
+
+
+
+/*CSS for side bar links*/
+
+#right_bar_nav_list{
+	position: relative;
+	padding: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	
+}
+
+
+.right_bar_ref_listItems
+{
+	list-style-type: none;
+	padding: 5px;
+	border: 1px solid white;
+	//word-wrap: break-word !important;
+	
+}
+
+.right_bar_ref_listItems:hover
+{
+	background-color: #d4dae8;
+
+	
+}
+
+#tch
+{
+	padding: 10px;
+	font-weight: bold;
+}
+
+
+a.right_bar_nav_link
+{
+	word-wrap: break-word !important;
+	 
+}

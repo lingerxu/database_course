@@ -1,0 +1,145 @@
+
+body
+{
+	font-family: "lucida grande", tahoma, verdana, arial, sans-serif !important; 
+
+}
+
+
+table
+{
+	table-layout: fixed;
+}
+td
+{
+	word-wrap: break-word !important;
+	border: 0px !important;
+	font-size: 14px;
+	
+	
+}
+
+p
+{
+	font-size: 11px;
+}
+
+#content_container
+{
+	margin-top: 100px;
+	padding-right: 5px;
+	padding-left: 5px;
+	
+}
+
+#contentPane
+{
+	overflow : scroll;
+	margin-left: 20px;
+	padding: 0;
+
+}
+
+#sidebar{
+	height: 500px;
+}
+
+
+#rightPane
+{
+	position: static;
+	height: 500px;
+	margin-left: 10px !important;
+	background-color: whiteSmoke;
+
+}
+
+
+.rating_col
+{
+	width: 10%s;
+}
+
+.inner_table
+{
+	margin-bottom: 0px;
+
+}
+
+.created_col .modified_col
+{
+	width: 45%;
+}
+.post_rating_row
+{
+	font-size: 11px !important;
+	font-weight: bold;
+}
+
+.post_content_div
+{
+}
+
+.button_cell
+{
+	text-align: right !important;
+	padding: 0px !important;
+	padding-right: 2px !important;
+}
+
+.inner_table:hover
+{
+	box-shadow: inset 0 0 5px #888;
+
+}
+
+
+.post_title_row
+{
+	border-top: thin solid lightgray;
+}
+
+.post_content_row
+{
+}
+
+.ratings_col1
+{
+	width: 25px;
+}
+
+
+.inner_div
+{
+	background-color: whiteSmoke;
+
+
+}
+
+#ddiv
+{
+	text-align: center;
+	vertical-align: middle;
+	
+}
+
+.reply-btn-col
+{
+	padding: 0px;
+}
+
+
+.reply-btn-row
+{
+	padding: 0px;
+}
+
+.replyLink
+{
+	padding: 3px !important;
+}
+.replyTitle
+{
+	font-weight: bold;
+	font-size: 12px;
+}

@@ -1,0 +1,17 @@
+td
+{
+	word-wrap: break-word !important;
+	
+}
+
+
+#thrdTable
+{
+	table-layout:fixed;
+}
+
+#content_container
+{
+	position: relative;
+	margin-top: 100px;
+}
