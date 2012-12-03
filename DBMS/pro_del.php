@@ -66,6 +66,23 @@ function deleteBlock($userId)
 	 //return json_encode($result);
 }
 
+function makeAI($userId)
+{
+	$result = array();
+	 $query = "UPDATE User SET type='1' WHERE userid=".$userId;
+	 $queryRessult = mysql_query($query);
+	 $result['deleteResult']=mysql_affected_rows();
+	  return json_encode(true);
+}
+
+function delAI($userId)
+{
+	$result = array();
+	 $query = "UPDATE User SET type='2' WHERE userid=".$userId;
+	 $queryRessult = mysql_query($query);
+	 $result['deleteResult']=mysql_affected_rows();
+	  return json_encode(true);
+}
 
 $event = $_POST["eventType"];
 
@@ -102,7 +119,18 @@ switch($event)
 		$result = deleteBlock($b_Id);
 	}
 	break;
-	
+	case "makeAI":
+	{
+		$u_Id = $_POST['userId'];
+		$result = makeAI($u_Id);
+	}
+	break;
+	case "delAI":
+	{
+		$u_Id = $_POST['userId'];
+		$result = delAI($u_Id);
+	}
+	break;
  }
  
   echo $result;

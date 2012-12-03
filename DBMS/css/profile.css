@@ -1,17 +1,85 @@
-td
+body
 {
-	word-wrap: break-word !important;
-	
+	font-family: "lucida grande", tahoma, verdana, arial, sans-serif !important; 
 }
 
 
+td
+{
+	word-wrap: break-word !important;
+/*	border: 0px !important;*/
+	
+}
+
+tr{
+	word-wrap: break-word !important;
+	
+}
+/*tr
+{
+	border: 0px !important;
+}
+*/
 #thrdTable
 {
 	table-layout:fixed;
 }
 
+table.post-cell-table
+{
+	table-layout: fixed;
+	background-color: whiteSmoke;
+	
+}
+
+table.post-cell-table:hover
+{
+	box-shadow: inset 0 0 5px #888;
+	
+}
+
+
 #content_container
 {
 	position: relative;
 	margin-top: 100px;
+}
+
+table.threadRowTable
+{
+	table-layout: fixed;
+	background-color: whiteSmoke;
+	
+}
+
+.thread-link-cell, .post-link-cell
+{
+	width: 90%;
+	font-weight: bold;
+}
+
+.thread-delete-link
+{
+	width: 10%;
+	text-align: right !important;
+}
+
+
+
+table.threadRowTable:hover
+
+{
+	box-shadow: inset 0 0 5px #888;
+	
+}
+
+
+.thread_info_row, .post_info_row
+{
+	/*	border-top: 1px solid lightgrey !important;*/
+	font-size: 11px;
+	color: gray;
+	padding: 0px !important;
+	
+	
 }

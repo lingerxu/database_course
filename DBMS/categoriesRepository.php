@@ -100,7 +100,103 @@ function getUserInfo()
 	return json_encode($_SESSION['username']);
 }
 
- $event = $_POST["eventType"];
+
+function basicSearchForKey($key)
+{
+
+	$allCat = array();
+	$jsonString = json_encode("failure");
+	$allCategoriesQuery  = "Select * from `category` where `Category` LIKE '%$key%'"; 
+	$numOfThreads = 0;
+	$result = mysql_query($allCategoriesQuery);
+	if($result==NULL)
+	{
+		die("Error fetching all Categories".mysql_error());
+	}
+	else
+	{
+		//Fetch all queries and encode in to jsos
+		while($row = mysql_fetch_assoc($result))
+		{
+			
+			//get number of threads in this category
+			$cid= $row['categoryid'];
+			$numberOfThreadsQuery  = "SELECT COUNT(*) AS num FROM Thread WHERE categoryid = $cid ";
+			$numOfThreadsResult = mysql_query($numberOfThreadsQuery);
+
+			if(mysql_num_rows($numOfThreadsResult)==1)
+			{
+				$n = mysql_fetch_assoc($numOfThreadsResult);
+				$numOfThreads = $n['num'];
+			}
+			
+			
+			//get the creator name from creator id
+			$userInfo = getUserInfoFromUserId($row['creator']);
+			
+			$row['num'] = $numOfThreads;
+			$row['creator'] = json_decode($userInfo);
+			array_push($allCat,$row);
+		}	
+		$jsonString = json_encode($allCat);
+		
+	
+	}
+	return $jsonString;
+	
+	
+}
+
+function advanceSearchForAttributes($key,$creator)
+{
+	
+	$allCat = array();
+	$jsonString = json_encode("failure");
+	$allCategoriesQuery;
+	$allCategoriesQuery = "Select * from `category` WHERE `creator` IN (SELECT userid FROM User WHERE username LIKE '%$creator%') UNION Select * from category where Category LIKE '%$key%'";
+	$numOfThreads = 0;
+	$result = mysql_query($allCategoriesQuery);
+
+	if($result==NULL)
+	{
+		die("Error fetching all Categories".mysql_error());
+	}
+	else
+	{
+		//Fetch all queries and encode in to jsos
+		while($row = mysql_fetch_assoc($result))
+		{
+			
+			//get number of threads in this category
+			$cid= $row['categoryid'];
+			$numberOfThreadsQuery  = "SELECT COUNT(*) AS num FROM Thread WHERE categoryid = $cid ";
+			$numOfThreadsResult = mysql_query($numberOfThreadsQuery);
+
+			if(mysql_num_rows($numOfThreadsResult)==1)
+			{
+				$n = mysql_fetch_assoc($numOfThreadsResult);
+				$numOfThreads = $n['num'];
+			}
+			
+			
+			//get the creator name from creator id
+			$userInfo = getUserInfoFromUserId($row['creator']);
+			
+			$row['num'] = $numOfThreads;
+			$row['creator'] = json_decode($userInfo);
+			array_push($allCat,$row);
+		}	
+		$jsonString = json_encode($allCat);
+		
+	
+	}
+	return $jsonString;
+	
+	
+}
+
+
+$event = $_POST["eventType"];
 
 $result;
 switch($event)
@@ -128,6 +224,23 @@ switch($event)
 	{
 		$result = getUserInfo();
 	}
+	break;
+	
+	case 'basicSearchForKey':
+	{
+		$key = $_POST['key'];
+		$result = basicSearchForKey($key);
+	}
+	break;
+	
+	
+	case 'advanceSearchForAttributes':
+	{
+			$key = (isset($_POST['key']))?$_POST['key']:'';
+			$creator = (isset($_POST['creator']))?$_POST['creator']:'';
+			$result = advanceSearchForAttributes($key,$creator);
+	}
+	break;
  }
 
  echo $result;

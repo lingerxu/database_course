@@ -32,7 +32,7 @@
 				<a class="brand" href="index.php">Course Disscussion System</a>
 				<ul class="nav">
 					<li class="divider-vertical"></li>				
-					<li><a  rel="tooltip" data-toggle="modal" href="#myModal" data-original-title="new post" data-placement="bottom"><i class="icon-pencil icon-white"></i></a></li>
+					<li><a id="createNewPost" rel="tooltip" data-toggle="modal" href="#myModal" data-original-title="Create New Post" data-placement="bottom"><i class="icon-pencil icon-white"></i></a></li>
 					<li class="divider-vertical"></li>				
 				</ul>
 
@@ -45,7 +45,7 @@
 						<a  id="drop1" role="button" class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="#">&nbsp;<span id="loggedUser">Usernname</span>&nbsp;<i class="icon-user icon-white"></i></a>
 						<ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
 							<li>
-								<a href="#" tabindex="-1">Profile</a>
+								<a href="profile.php" tabindex="-1">Profile</a>
 							</li>
 							<li>
 								<a href="#" tabindex="-1" class="logoutLink">Logout</a>
@@ -59,10 +59,10 @@
 
 
 
-				<form class="navbar-search">
+				<form class="navbar-search" onsubmit="return false;">
 					<div class="input-append">
-						<input class="span3" id="searchText" placeholder="Search Threads" type="text">
-						<a class="btn" href="#" rel="popover" id="threadSearch" data-placement="top" data-content="demo" data-orignal-title="Search"><i class="icon-search"></i></a>
+						<input class="span3" id="postSearchText" placeholder="Search Posts" type="text">
+						<a class="btn" href="#" rel="popover" id="postSearch" data-placement="top" data-content="demo" data-orignal-title="Search"><i class="icon-search"></i></a>
 						<div class="popover fade bottom in" id="example">
 							<div class="arrow"></div>
 							<div class="popover-inner">
@@ -77,14 +77,30 @@
 					</div>
 				</form>
 			</div>
+		
+		<div class="container-fluid" style="padding-left: 5px !important; padding-right: 5px !important;">
+			<div class="row-fluid">
+				<div class="span10" style="margin-left: 20px !important;">
+					<strong>
+						<div class="alert alert-error" id="errorAlert" style="display: none">
+						</div>
+						
+					</strong>
+				
+				</div>
+				<div class="span2"></div>
+			</div>
 		</div>
 
-
+		</div>
+		
+		
 		<div class="container-fluid" id="content_container">
 			<div class="row-fluid" id="row1"class="margin: 0px;">
 
 
-				<div class="span9" id="contentPane">
+				<div class="span11" id="contentPane">
+				<div id="search_result_info"><a href="" id="clearSearchResult">Clear Search Results</a></div>
 					<!--Body content-->
 					<table class="table outer_table">
 						<thead><caption><ul class="breadcrumb pull-left">
@@ -107,7 +123,7 @@
 							
 									<li><a tabindex="-1" href="" sort_key="votes" class="sort_attr" currOrder='ASC'>number of votes</a></li>
 									<li><a tabindex="-1" href="" sort_key="dateposted" class="sort_attr" currOrder='ASC'>Date created</a></li>
-									
+									<li><a tabindex="-1" href="" sort_key="createdby" class="sort_attr" currOrder='ASC'>User</a></li>
 								</ul>
 							</li>
 						</ul>
@@ -174,7 +190,6 @@
 				</div>
 
 
-				<div class="span3" id="rightPane"></div>
 			</div>
 		</div>
 
@@ -186,6 +201,7 @@
 				<h6>New Post</h6>
 			</div>
 			<div class="modal-body">
+			<div class="alertPopUp" id="NewPostErrorMsg">Alert</div>
 				<textarea rows="5" class="span7" placeholder="Your message goes here" id="newPostDesc"></textarea>
 				<br/>
 				<div>
@@ -240,8 +256,8 @@
 				
 			</div>
 			<div class="modal-footer">
-				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-				<a href="#" class="btn btn-primary">Search</a>
+				<a href="#" class="btn" data-dismiss="modal" onclick="$('#keyword_filter').val('');$('#user_filter').val('');$('#tag_filter').val('');">Cancel</a>
+				<a href="#" class="btn btn-primary" data-dismiss="modal" id="advancedSearch">Search</a>
 			</div>
 		</div>
 

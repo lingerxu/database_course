@@ -1,7 +1,8 @@
 $("document").ready(
 	function()
 	{
-		
+		$("#NewPostErrorMsg").hide();
+		$("#search_result_info").hide();
 		
 		//Get logged in userinfo
 		$.ajax({
@@ -68,22 +69,20 @@ $("document").ready(
 		
 		
 		
-		//get get url components
-		var params = location.search;
-		console.log(params);
-		var components = String(params).split("=");
-		console.log(components);
-		var param_name1 = components[0].slice(1);
-		var param_val1 = components[1].slice(0,components[1].indexOf('&'));
-		var param_name2 = components[1].slice(components[1].indexOf('&')+1);
-		var param_val2 = components[2];
-		console.log(param_val1+" <> "+param_name1+" <> "+param_val2+" <> "+param_name2);
+		//get url components
+		function getURLParamValue(paramName){
+			   if(paramName=(new RegExp('[?&]'+encodeURIComponent(paramName)+'=([^&]*)')).exec(location.search))
+			      return decodeURIComponent(paramName[1]);
+			}
+		var threadId = getURLParamValue("threadId");
+		var catId = getURLParamValue("catId");
+		console.log("Thread id = "+threadId+" Cat Id = "+catId);
 		
 		$.ajax({
 			type: "POST",
 			url: "threadsRepository.php",
 			async: false,
-			data: { requestType: "getParentCategoryInfo", catId: String(param_val2) },
+			data: { requestType: "getParentCategoryInfo", catId: String(catId) },
 		}).done(function(response){
 				var json = jQuery.parseJSON(response);
 				console.log(json);
@@ -95,12 +94,17 @@ $("document").ready(
 			type: "POST",
 			url: "postsRepository.php",
 			async: false,
-			data: { requestType: "getParentThreadInfo", threadId: String(param_val1) },
+			data: { requestType: "getParentThreadInfo", threadId: String(threadId) },
 		}).done(function(response){
 				var json = jQuery.parseJSON(response);
 				console.log("thread is "+json);
 				$("#ThreadName").html(String(json.title));
 				$("#ThreadName").attr("threadId",String(json.threadid));
+				// Disabling the create post button if thread is closed
+				if(json.status=='closed') {
+					$("#createNewPost").attr('href',"#");
+					$("#createNewPost").css('cursor',"not-allowed");
+				}
 		 });
 		
 		
@@ -109,55 +113,10 @@ $("document").ready(
 			type: "POST",
 			url: "postsRepository.php",
 			async: false,
-			data: { requestType: "getPostsForThread", threadId: String(param_val1) },
+			data: { requestType: "getPostsForThread", threadId: String(threadId) },
 		}).done(function(response){
 			var list = jQuery.parseJSON(response);
-			jQuery.each(list, function() {
-				var cell = $("#ref").clone();
-				$(cell).removeAttr('id');
-				$(cell).attr('postId',String(this.postid));
-				var x=$(cell).find(".mybadge").html(this.votes);
-				console.log("mybadge:::"+x);
-				$(cell).find('.posted_date_val').html(this.dateposted);
-				if(this.createdby != $("#loggedUser").attr('userid')) {
-					$.post('helpers.php',{requestType: 'getUserInfoFromUserId',userId: String(this.createdby)},
-					function(response){
-						var user = jQuery.parseJSON(response);
-						console.log(user);
-						$(cell).find('.posted_by_val').html(user.username);
-					});
-				} else {
-					$(cell).find('.posted_by_val').html($("#loggedUser").attr('username'));
-				}
-				$(cell).find('.post_content_div').attr("value",this.text);
-				if(this.text.indexOf('[Post]') > -1) {
-					this.text = convertPostToTable(this.text,1);
-				}
-				$(cell).find('.post_content_div').html(this.text);console.log(this.tags.length);
-				if(this.tags.length>0)
-				{
-					console.log("Hello");
-					for(var j=0 ; j<this.tags.length; j++)
-					{
-						var tag  =this.tags[j];
-						v = $(cell).find("#reftag").clone();
-						$(cell).find("#reftag").hide();
-						$(v).removeAttr('id');
-						$(v).show();
-						$(v).html(tag);
-						$(cell).find('.tagContainer').append(v);
-					}
-				}
-				else
-				{
-					$(cell).find('.tagsRow').hide();
-				}
-				$(cell).insertAfter("#ref");
-				
-			});
-			$("#reftag").hide();
-			$("#ref").hide();
-			
+			layoutRows(list);			
 		});
 
 		function convertPostToTable(text,counter) {
@@ -194,6 +153,24 @@ $("document").ready(
 			parentPostByUser = $parentPostRow.find('.posted_by_val').html();
 			parentPostDate = $parentPostRow.find('.posted_date_val').html();
 			parentPost = '[Post]'+parentPostByUser+' on '+parentPostDate+' wrote :[lineBreak]'+parentPostText+'[endPost]';
+			
+			var replyPostContent=$(this).parent().find("#replyPostContent").val();
+			console.log("ERROR in Reply"+replyPostContent.length);
+			var isvalid = false;
+			isvalid = ((replyPostContent.length>0)?true:false);
+						
+			if(!isvalid)
+			{
+				console.log("ERROR in Reply");
+				
+				$("#errorAlert").html("<i class=' icon-warning-sign'></i> Please enter some text");
+				$("#errorAlert").fadeIn('fast');
+				$("#errorAlert").fadeOut(3000);
+				return;
+			}
+			else
+			{
+			
 			reply = parentPost + $(this).parent().find("#replyPostContent").val();
 			//get the post id for the post to which you are replying
 			var parentPostId  = $(this).closest('.tableRow').attr('postId');
@@ -202,15 +179,16 @@ $("document").ready(
 				url: "postsRepository.php",
 				async: false,
 				data: { requestType: "createReplyPost", replyText: String(reply),
-					postId: String(parentPostId), threadId:String(param_val1) },
+					postId: String(parentPostId), threadId:String(threadId) },
 			}).done(function(data){
 					var response = jQuery.parseJSON(data);
 					if(response!=true) {
 						alert("There was an error posting the reply!\nPlease check the console logs for more details");
 					}
 					console.log(response);
-					window.location = 'posts.php?threadId='+param_val1+'&catId='+param_val2;
+					window.location = 'posts.php?threadId='+threadId+'&catId='+catId;
 				});
+			}
 		});
 		
 		
@@ -224,7 +202,7 @@ $("document").ready(
 		$("#newPostSaveButton").click(function(event){
 			// get category id
 			// get post description
-			
+			event.preventDefault();
 			var desc = $("#newPostDesc").val();
 			var threadId = $("#ThreadName").attr('threadId');
 			var tagsList = $('#tagsList').val();
@@ -232,6 +210,23 @@ $("document").ready(
 			var jsonTags = JSON.stringify(allTags);
 			//create new post and get updated list of posts
 			console.log("Creating new post : "+ desc + "for thread "+threadId);
+			
+			var isvalid = false;
+				
+			isvalid = ((desc.length>0)?true:false);
+						
+			if(!isvalid)
+			{
+				console.log("ERROrin post");
+				//$(".alert").hide();
+				$("#NewPostErrorMsg").html("Please enter some text");
+				$("#NewPostErrorMsg").fadeIn('fast');
+				$("#NewPostErrorMsg").fadeOut(3000);
+				return;
+			}
+			else
+			{
+			
 			var postData = new Object();
 			postData.requestType = 'createNewPost';
 			postData.tags = jsonTags;
@@ -251,10 +246,11 @@ $("document").ready(
 				}
 				console.log(response);
 				$("#newPostCloseButton").click();
-				window.location = 'posts.php?threadId='+threadid+'&catId='+param_val2;
+				window.location = 'posts.php?threadId='+threadId+'&catId='+catId;
 			});
 			
-		});
+			}
+			});
 		
 		
 		
@@ -275,7 +271,7 @@ $("document").ready(
 					if(response!=true) {
 						alert("Permission denied to delete the post");
 					}
-					window.location = 'posts.php?threadId='+param_val1+'&catId='+param_val2;
+					window.location = 'posts.php?threadId='+threadId+'&catId='+catId;
 				});
 			
 		});
@@ -317,9 +313,25 @@ $("document").ready(
 		$('#editSaveButton').live('click',function(event){
 			event.preventDefault();
 			var $parentPostRow = $(this).closest('.inner_table');
-			eixstingReplyText = $parentPostRow.find('.post_content_div').attr('prevReplyText');
+			existingReplyText = $parentPostRow.find('.post_content_div').attr('prevReplyText');
 			postText = existingReplyText + $(this).parent().find("#editPostContent").val();
 			//get the post id for the post which you are editing
+			var editPostContent= $(this).parent().find("#editPostContent").val();
+			var isvalid = false;
+			isvalid = ((editPostContent.length>0)?true:false);
+						
+			if(!isvalid)
+			{
+				console.log("ERROR in Edit");
+				
+				$("#errorAlert").html("<i class=' icon-warning-sign'></i> Please enter some text");
+				$("#errorAlert").fadeIn('fast');
+				$("#errorAlert").fadeOut(3000);
+				return;
+			}
+			else
+			{
+			
 			var postId  = $(this).closest('.tableRow').attr('postId');
 			$.ajax({
 				type: "POST",
@@ -333,8 +345,9 @@ $("document").ready(
 						alert("There was an error editing the Post!\nPlease check the console logs for more details");
 					}
 					console.log(response);
-					window.location = 'posts.php?threadId='+param_val1+'&catId='+param_val2;
+					window.location = 'posts.php?threadId='+threadId+'&catId='+catId;
 				});
+			}
 		});
 
 		$('.catLink').live('click',function(event){
@@ -473,7 +486,7 @@ $("document").ready(
 			$(this).attr('currOrder',postData.order);
 			console.log(postData.order);
 			console.log(postData.attribute);
-			postData.threadId = String(param_val1);
+			postData.threadId = String(threadId);
 			postData.requestType = 'sortByAttributeAndOrder';			
 			$.ajax({
 				type: "POST",
@@ -482,58 +495,129 @@ $("document").ready(
 				data: postData,
 			}).done(function(response){		
 				var list = jQuery.parseJSON(response);
-				console.log(list);
 				$("#ref").siblings().detach();
-				
-				jQuery.each(list, function() {
-					var cell = $("#ref").clone();
-					$(cell).removeAttr('id');
-					$(cell).show();
-					$(cell).attr('postId',String(this.postid));
-					var x=$(cell).find(".mybadge").html(this.votes);
-					console.log("mybadge:::"+x);
-					$(cell).find('.posted_date_val').html(this.dateposted);
-					if(this.createdby != $("#loggedUser").attr('userid')) {
-						$.post('helpers.php',{requestType: 'getUserInfoFromUserId',userId: String(this.createdby)},
-						function(response){
-							var user = jQuery.parseJSON(response);
-							console.log(user);
-							$(cell).find('.posted_by_val').html(user.username);
-						});
-					} else {
-						$(cell).find('.posted_by_val').html($("#loggedUser").attr('username'));
-					}
-					$(cell).find('.post_content_div').attr("value",this.text);
-					if(this.text.indexOf('[Post]') > -1) {
-						this.text = convertPostToTable(this.text,1);
-					}
-					$(cell).find('.post_content_div').html(this.text);console.log(this.tags.length);
-					if(this.tags.length>0)
-					{
-						
-						for(var j=0 ; j<this.tags.length; j++)
-						{
-							var tag  =this.tags[j];
-							v = $(cell).find("#reftag").clone();
-							$(cell).find("#reftag").hide();
-							$(v).removeAttr('id');
-							$(v).show();
-							$(v).html(tag);
-							$(cell).find('.tagContainer').append(v);
-						}
-					}
-					else
-					{
-						$(cell).find('.tagsRow').hide();
-					}
-					$(cell).insertAfter("#ref");
-					
-				});
-				$("#reftag").hide();
-				$("#ref").hide();
-				
+				layoutRows(list);
 			});
 			
 			
 		});
+		
+		// Search for posts
+		
+		$("#postSearch").live('click', function(event) {
+
+			event.preventDefault();
+			performSearch();			
+			
+		});
+
+		$('#postSearchText').live('keyup',function(e){
+			e.preventDefault();
+			if(e.keyCode == 13)
+			{
+				e.preventDefault();
+				performSearch();
+			}
+		});
+		
+		$("#advancedSearch").live('click', function(event) {
+
+			event.preventDefault();
+			performSearch();
+			
+		});
+		
+		
+		function performSearch() {
+			var searchRequest =new Object();
+			searchRequest.text = $("#postSearchText").val();
+			searchRequest.threadId = String(threadId);
+			searchRequest.catId = String(catId);
+			if($("#keyword_filter").val()!="") {
+				searchRequest.text = $("#keyword_filter").val();
+			}
+			searchRequest.user = $("#user_filter").val();
+			searchRequest.tag = $("#tag_filter").val();
+			$.ajax({
+				type: "POST",
+				url: "searchRepository.php",
+				async: false,
+				data: {searchRequest : searchRequest, requestType : 'searchPosts'}
+			}).done(function(response){		
+				var list = jQuery.parseJSON(response);
+				$("#search_result_info").show();
+				$('#keyword_filter').val('');
+				$('#user_filter').val('');
+				$('#tag_filter').val('');
+				$("#postSearchText").val('');
+				$("#ref").siblings().detach();				
+				layoutRows(list);				
+			});
+			
+		}
+		
+		$("#search_result_info").live('click',function(event){
+			event.preventDefault();
+			$("#search_result_info").hide();
+			$("#postSearchText").val('');
+			$.ajax({
+				type: "POST",
+				url: "postsRepository.php",
+				async: false,
+				data: { requestType: "getPostsForThread", threadId: String(threadId) },
+			}).done(function(response){
+				var list = jQuery.parseJSON(response);
+				$("#ref").siblings().detach();
+				layoutRows(list);			
+			});
+		});
+		
+		function layoutRows(list) {
+			jQuery.each(list, function() {
+				var cell = $("#ref").clone();
+				$(cell).removeAttr('id');
+				$(cell).show();
+				$(cell).attr('postId',String(this.postid));
+				var x=$(cell).find(".mybadge").html(this.votes);
+				console.log("mybadge:::"+x);
+				$(cell).find('.posted_date_val').html(this.dateposted);
+				if(this.createdby != $("#loggedUser").attr('userid')) {
+					$.post('helpers.php',{requestType: 'getUserInfoFromUserId',userId: String(this.createdby)},
+					function(response){
+						var user = jQuery.parseJSON(response);
+						console.log(user);
+						$(cell).find('.posted_by_val').html(user.username);
+					});
+				} else {
+					$(cell).find('.posted_by_val').html($("#loggedUser").attr('username'));
+				}
+				$(cell).find('.post_content_div').attr("value",this.text);
+				if(this.text.indexOf('[Post]') > -1) {
+					this.text = convertPostToTable(this.text,1);
+				}
+				$(cell).find('.post_content_div').html(this.text);console.log(this.tags.length);
+				if(this.tags.length>0)
+				{
+					console.log("Hello");
+					for(var j=0 ; j<this.tags.length; j++)
+					{
+						var tag  =this.tags[j];
+						v = $(cell).find("#reftag").clone();
+						$(cell).find("#reftag").hide();
+						$(v).removeAttr('id');
+						$(v).show();
+						$(v).html(tag);
+						$(cell).find('.tagContainer').append(v);
+					}
+				}
+				else
+				{
+					$(cell).find('.tagsRow').hide();
+				}
+				$(cell).insertAfter("#ref");
+				
+			});
+			$("#reftag").hide();
+			$("#ref").hide();			
+		}
 });

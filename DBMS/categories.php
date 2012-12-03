@@ -46,7 +46,7 @@
 						<a  id="drop1" role="button" class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="#"><p id="loggedUser" style="display: inline;">Username</p>&nbsp;<i class="icon-user icon-white"></i></a>
 						<ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
 							<li>
-								<a href="#" tabindex="-1">Profile</a>
+								<a href="profile.php" tabindex="-1">Profile</a>
 							</li>
 							<li>
 								<a href="#" tabindex="-1" class="logoutLink">Logout</a>
@@ -62,8 +62,8 @@
 
 				<form class="navbar-search">
 					<div class="input-append">
-						<input class="span3" id="searchText" type="text" placeholder="Search Threads">
-						<a class="btn" href="#" id="threadSearch"><i class="icon-search"></i></a>
+						<input class="span3" id="searchText" type="text" placeholder="Search Categories">
+						<a class="btn" href="#" id="catSearch"><i class="icon-search"></i></a>
 						<a  rel="tooltip" data-toggle="modal" href="#filtersModal" data-original-title="Thread Search Filters" data-placement="bottom" class="btn">Advance Search</i></a>
 						<!-- <a href="#" id="blob" class="btn" rel="popover inner" data-placement="bottom" data-content="Works" data-original-title="Filters">Advance Search</a> -->
 						
@@ -101,6 +101,7 @@
 
 				<div  class="span7" id="contentPane">
 					<!--Body content-->
+					<div id="search_result_info"><a href="" id="clearSearchResult">Clear Search Results</a></div>
 					<table class="table">
 						<caption><ul class="breadcrumb pull-left">
 							<li>Home <span class="divider">/</span></li>
@@ -218,12 +219,12 @@
 				    </div>
 				 </div>
 
-				<div class="control-group">
+				<!-- <div class="control-group">
 				    <label class="control-label" for="inputEmail">Search by Tag</label>
 				    <div class="controls">
 				      <input type="text" id="tag_filter" placeholder="tag">
 				    </div>
-				 </div>
+				 </div> -->
 				
 				
 				
@@ -231,8 +232,8 @@
 				
 			</div>
 			<div class="modal-footer">
-				<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-				<a href="#" class="btn btn-primary">Search</a>
+				<a href="#" class="btn" data-dismiss="modal" id="catAdvancedSearchCancelButton">Cancel</a>
+				<a href="#" class="btn btn-primary" id="catAdvancedSearch">Search</a>
 			</div>
 		</div>
 

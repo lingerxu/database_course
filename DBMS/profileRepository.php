@@ -21,7 +21,7 @@ if ($q == 'category')
 
 	else if (mysql_num_rows($result) == 0) 
 	{
-    	echo "No rows found, nothing to print so am exiting";
+    	echo "There are no Categories created yet!";
     	exit;
 	}
 	 
@@ -74,11 +74,11 @@ if ($q == 'category')
 
 	else if (mysql_num_rows($result) == 0) 
 	{
-    echo "You are a lousy user. You have not created any Threads yet. So go create some.";
+    echo "You have not created any Threads yet!";
     exit;
 	}
 	 
-	 echo "<table class=\"table\" border='1' id='thrdTable'>
+	 echo "<table   id='thrdTable'>
 	 <!--<tr>
 	 <th>Title</th>
 	 <th>Description</th>
@@ -87,17 +87,22 @@ if ($q == 'category')
 	 </tr>-->";
   	while($row = mysql_fetch_array($result))
    {
-	   echo "<tr colspan=2>";
-	   echo "<td colspan=2> <a href=\"javascript:void(0)\" onclick=\"goToPost(". $row['threadid'] ."," . $row['categoryid'] .")\">" . $row['title'] . "<a href=\"javascript:void(0)\" class=\"delLink\" onclick=\"onthreaddel(". $row['threadid'] .")\" ><i  class=\"icon-trash\"></i></a></td>";
+	   echo "<table class='table threadRowTable'>";
+	   echo "<tr>";
+	   echo "<td colspan=2 class='thread-link-cell'> <a href=\"javascript:void(0)\" onclick=\"goToPost(". $row['threadid'] ."," . $row['categoryid'] .")\">" . $row['title'] . "</td>";
+	   echo "<td class='thread-delete-link'><a href=\"javascript:void(0)\" class=\"delLink\" onclick=\"onthreaddel(". $row['threadid'] .")\" ><i  class=\"icon-trash\"></i></a></td>";
 	   echo "</tr>";
-	   echo "<tr colspan=2>";
-	   echo "<td colspan=2>" . $row['description'] . "</td>";
-	   echo "</tr> <tr>";
+	   echo "<tr colspan=3>";
+	   echo "<td colspan=3>" . $row['description'] . "</td>";
+	   echo "</tr> <tr class='thread_info_row'>";
 	   echo "<td> Votes : " . $row['votes'] . "</td>";
 	   echo "<td> Views: " . $row['views'] . "</td>";
+	   echo "<td/>";
 	   echo "</tr>";
 	   echo "</table>";
-	   echo "<table class=\"table\" border='1' id='thrdTable'>";
+
+	   // echo "</table>";
+	   // echo "<table class=\"table\" border='1' id='thrdTable'>";
    }
 	echo "</table>";
  }
@@ -116,11 +121,11 @@ if ($q == 'category')
 
 	else if (mysql_num_rows($result) == 0) 
 	{
-    echo "You are a lousy user. You have not created any Posts yet. So go create some.";
+    echo "You have not created any Posts yet!";
     exit;
 	}
 	
-	echo "<table class=\"table\" border='1' id='thrdTable'>";
+	echo "<table class=\"table\" border='1' >";
 	
 	while($row = mysql_fetch_array($result))
 	{
@@ -139,13 +144,17 @@ if ($q == 'category')
 	   	$result2 = mysql_query($sql2);
 	   	$row2 = mysql_fetch_array($result2);
 		echo "<tr>";
-		echo "<td><a href=\"javascript:void(0)\" onclick=\"goToPost(". $row2['threadid'] ."," . $row2['categoryid'] .")\">" . $row2['title'] . "</a></td>";
-   		echo "<td>" . $post_text . "</td>";
-		echo "<td> Votes : " . $row['votes'] . "</td>";
+		echo "<table class='table post-cell-table'>";
+		echo "<tr>";
+		echo "<td class='post-link-cell'><a href=\"javascript:void(0)\" onclick=\"goToPost(". $row2['threadid'] ."," . $row2['categoryid'] .")\">" . $row2['title'] . "</a></td>";
 		echo "<td class=\"skeletonCol catDelButton\" colspan=\"1\"><a href=\"javascript:void(0)\" class=\"delLink\" onclick=\"onpostdel(". $row['postid'] .")\" ><i class=\"icon-trash\"></i></a></td>";
 		echo "</tr>";
-		echo "</table>";
-   		echo "<table class=\"table\" border='1' id='thrdTable'>";
+		
+   		echo "<tr colspan='2'><td colspan='2'>" . $post_text . "</td></tr>";
+		echo "<tr colspan='2' class='post_info_row'><td colspan='2'> Votes : " . $row['votes'] . "</td></tr>";
+
+		 echo "</table>";
+   		// echo "<table class=\"table\" border='1' id='thrdTable'>";
    	}
 	echo "</table>"; 
 		
@@ -165,7 +174,7 @@ else if ($q == 'roster')
 
 	else if (mysql_num_rows($result) == 0) 
 	{
-    	echo "No rows found, nothing to print so am exiting";
+    	echo "This class dosent have any members yet!";
     	exit;
 	}
 	
@@ -190,16 +199,19 @@ else if ($q == 'roster')
 			   {
 				   $role="Instructor";
 				   $mode="hidden";
+				   $mode2="hidden";
 			   }
 			   else if($type == "1")
 			   {
 				   $role="Associate Instructor";
 				   $mode="visible";
+				   $mode2="visible";
 			   }
 			   else if($type == "2")
 			   {
 				   $role="Student";
 				   $mode="visible";
+				   $mode2="visible";
 			   }
 			}
 			else if($logged_user_type == 1)
@@ -208,16 +220,19 @@ else if ($q == 'roster')
 			   {
 				   $role="Instructor";
 				   $mode="hidden";
+				   $mode2="hidden";
 			   }
 			   else if($type == "1")
 			   {
 				   $role="Associate Instructor";
 				   $mode="hidden";
+				   $mode2="hidden";
 			   }
 			   else if($type == "2")
 			   {
 				   $role="Student";
 				   $mode="visible";
+				   $mode2="hidden";
 			   }
 			}
 			else if($logged_user_type == 2)
@@ -226,16 +241,19 @@ else if ($q == 'roster')
 			   {
 				   $role="Instructor";
 				   $mode="hidden";
+				   $mode2="hidden";
 			   }
 			   else if($type == "1")
 			   {
 				   $role="Associate Instructor";
 				   $mode="hidden";
+				   $mode2="hidden";
 			   }
 			   else if($type == "2")
 			   {
 				   $role="Student";
 				   $mode="hidden";
+				   $mode2="hidden";
 			   }
 			}
 		   else $role="Blocked";
@@ -243,8 +261,14 @@ else if ($q == 'roster')
 				 <tr class=\"rowSkeleton\">
 				 <td class=\"skeletonCol catName\"> " . $row['firstname'] . " " . $row['lastname'] ."</a> </td>
 				 <td class=\"skeletonCol catCreated\"> <a href=\"mailto:".$row['emailid'] ."\" > " .$row['emailid'] . "</a> </td> 				 <td class=\"skeletonCol catCreated\"> " .$role . " </td>
-			 	 <td class=\"skeletonCol catDelButton\" colspan=\"1\"><a style=\"visibility:". $mode ."; \" href=\"javascript:void(0)\" class=\"delLink\" onclick=\"onuserdel(". $row['userid'] .")\" ><i class=\" icon-remove\"></i></a></td> 
-				 </tr>";
+			 	 <td class=\"skeletonCol catDelButton\" colspan=\"1\"><a style=\"visibility:". $mode ."; \" href=\"javascript:void(0)\" class=\"delLink\" onclick=\"onuserdel(". $row['userid'] .")\" ><i title=\"Block User\" class=\" icon-remove\"></i></a></td> ";
+				 if($type == "2")
+				 {
+				echo" <td class=\"skeletonCol catDelButton\" colspan=\"1\"><a style=\"visibility:". $mode2 ."; \" href=\"javascript:void(0)\" class=\"delLink\" onclick=\"onmake_AI(". $row['userid'] .")\" ><i title=\"Promote to AI\" class=\" icon-arrow-up\"></i></a></td>";  }
+				if($type == "1")
+				 {
+				echo" <td class=\"skeletonCol catDelButton\" colspan=\"1\"><a style=\"visibility:". $mode2 ."; \" href=\"javascript:void(0)\" class=\"delLink\" onclick=\"ondel_AI(". $row['userid'] .")\" ><i title=\"Demote to Student\" class=\" icon-arrow-down\"></i></a></td>";  }
+		echo    " </tr>";
 	   }
 	   echo "</tbody>
 			 </table>";
@@ -295,7 +319,7 @@ else if ($q == 'group')
 		   echo "<tr class=\"rowSkeleton\">
 				 <td class=\"skeletonCol catName\"> " . $row['name'] . "</a> </td>
 				 <td class=\"skeletonCol catCreated\"> " .$row2['firstname'] . " " . $row2['lastname'] . "</td> 							
-				 <td class=\"skeletonCol catDelButton\" colspan=\"1\"><a style=\"visibility:". $mode ."; \" href=\"javascript:void(0)\" class=\"delLink\" onclick=\"ongrpdel(". $row['id'] .")\" ><i class=\"icon-remove\"></i></a></td> 
+				 <td class=\"skeletonCol catDelButton\" colspan=\"1\"><a style=\"visibility:". $mode ."; \" href=\"javascript:void(0)\" class=\"delLink\" onclick=\"ongrpdel(". $row['id'] .")\" ><i title=\"Remove Group\" class=\"icon-remove\"></i></a></td> 
 				 </tr>";
 	   }
 	   echo "</tbody>
@@ -339,12 +363,6 @@ else if ($q == 'blocked')
     	exit;
 	}
 	
-	if($_SESSION['userType']==0)
-	   {
-		   $mode="visible";
-	   }
-	   else $mode="hidden";
-	   
 	echo "<table class=\"table\">
 		<thead>
 		<th class=\"skeletonCol catName\"> Name </th>
@@ -355,6 +373,11 @@ else if ($q == 'blocked')
 
 		while($row = mysql_fetch_array($result))
    		{
+			if($_SESSION['userType']==0 or $_SESSION['userType']==1)
+			   {
+				   $mode="visible";
+			   }
+			   else $mode="hidden";
 	   		$type = $row['type'];
 //	   		$sql2="SELECT * FROM User where userid = '".$creator."'";
 //	   		$result2 = mysql_query($sql2);
@@ -364,15 +387,17 @@ else if ($q == 'blocked')
 			   $role="Student";
 		   }
 		   else if($type == "4")
-		   {
+		   {			   
 			   $role="Associate Instructor";
+			   if ($_SESSION['userType']==1)
+			     $mode="hidden";
 		   }
 		   
 		   echo "
 				 <tr class=\"rowSkeleton\">
 				 <td class=\"skeletonCol catName\"> " . $row['firstname'] . " " . $row['lastname'] ."</a> </td>
 				 <td class=\"skeletonCol catCreated\"> <a href=\"mailto:".$row['emailid'] ."\" > " .$row['emailid'] . "</a> </td> 				 <td class=\"skeletonCol catCreated\"> " .$role . " </td>
-			 	 <td class=\"skeletonCol catDelButton\" colspan=\"1\"><a style=\"visibility:". $mode ."; \" href=\"javascript:void(0)\" class=\"delLink\" onclick=\"onremblock(". $row['userid'] .")\" ><i class=\"icon-ok\"></i></a></td> 
+			 	 <td class=\"skeletonCol catDelButton\" colspan=\"1\"><a style=\"visibility:". $mode ."; \" href=\"javascript:void(0)\" class=\"delLink\" onclick=\"onremblock(". $row['userid'] .")\" ><i title=\"Unblock User\" class=\"icon-ok\"></i></a></td> 
 				 </tr>";
 	   }
 	   echo "</tbody>

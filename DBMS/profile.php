@@ -16,7 +16,7 @@
 			   }
 			   else if($logged_user_type == "1")
 			   {
-				  $mode="none";
+				  $mode="visible";
 			   }
 			   else if($logged_user_type == "2")
 			   {
@@ -75,7 +75,6 @@
 			}
 			xmlhttp.open("POST","profileRepository.php?q="+str,true);
 			xmlhttp.send();
- 
 		}
  
 		function ondel(id)
@@ -145,6 +144,40 @@
 			list(global_str);
 		}
 		
+		function onmake_AI(id)
+		{
+ 			//alert (id);
+			var userId = id;
+			console.log(userId);
+			
+			$.ajax({
+				type: "POST",
+				url: "pro_del.php",
+				async: false,
+				data: {eventType: "makeAI", userId: userId},
+			}).done(function(response){
+				});
+			
+			list(global_str);
+		}
+		
+		function ondel_AI(id)
+		{
+ 			//alert (id);
+			var userId = id;
+			console.log(userId);
+			
+			$.ajax({
+				type: "POST",
+				url: "pro_del.php",
+				async: false,
+				data: {eventType: "delAI", userId: userId},
+			}).done(function(response){
+				});
+			
+			list(global_str);
+		}
+		
 		function onremblock(id)
 		{
  			//alert (id);
@@ -207,61 +240,11 @@
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner" style="padding: 0px 10px;">
 			<a class="brand" href="index.php">Course Discussion System</a>
-			<ul class="nav">
-				<li class="divider-vertical"></li>				
-				<li><a id="create-category-link" rel="tooltip" data-toggle="modal" href="#myModal" data-original-title="create category" data-placement="bottom"><i class="icon-pencil icon-white"></i></a></li>
-				<li class="divider-vertical"></li>				
-			</ul>
-
-
 
 			<ul class="nav pull-right">
-				<!-- <li class="divider-vertical"></li> -->
-				<li class="divider-vertical"></li>				
-				<li class="dropdown">
-					<a  id="drop1" role="button" class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="#"><p id="loggedUser" style="display: inline;">Username</p>&nbsp;<i class="icon-user icon-white"></i></a>
-					<ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
-						<li>
-							<a href="#" tabindex="-1">Profile</a>
-						</li>
-						<li>
-							<a href="#" tabindex="-1" class="logoutLink">Logout</a>
-						</li>
-
-					</ul>
-				</li>
-				<li class="divider-vertical"></li>				
+				<li><a class="logoutLink" href="#">Logout</a></li>
 			</ul>
 
-
-
-
-			<form class="navbar-search">
-				<div class="input-append">
-					<input class="span3" id="appendedInputButtons" type="text">
-					<a class="btn" href="#"><i class="icon-search"></i></a>
-					<a  rel="tooltip" data-toggle="modal" href="#filtersModal" data-original-title="create category" data-placement="bottom" class="btn">Advance Search</i></a>
-					<!-- <a href="#" id="blob" class="btn" rel="popover inner" data-placement="bottom" data-content="Works" data-original-title="Filters">Advance Search</a> -->
-						
-				</div>
-			</form>
-		</div>
-			
-		<div class="row-fluid" id="row1"class="margin: 0px;">
-			<div class="span2 ">
-			</div>
-			<div  class="span7">
-				<strong>
-					<div class="alert alert-error" id="errorAlert" style="display: none">
-					</div>
-					<div class="alert" id="infoAlert" style="display: none;">
-					</div>
-					<div class="alert alert-info" id="successAlert" style="display: none;">
-					</div>
-				</strong>
-			</div>
-			<div class="span3">
-			</div>
 		</div>
 			
 	</div>
@@ -281,6 +264,7 @@
 				<li id="group" onclick="list(this.id)"><a href="#"><i class="icon-chevron-right"></i> Group</a></li>
                 <li style="display: <?php echo $mode; ?>" id="blocked" onclick="list(this.id)"><a href="#"><i class="icon-chevron-right"></i> Blocked &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Students</a></li>
                 <li id="password" onclick="list(this.id)"><a href="#"><i class="icon-chevron-right"></i> Change &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password</a></li>
+                <li id="Statistics"><a href="stats.php"><i class="icon-chevron-right"></i> Statistics</a></li>
 			</ul>
 		</div>
 		<div  class="span10 well" id="contentPane">

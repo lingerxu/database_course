@@ -14,13 +14,19 @@
 	
 	<script src="js/threads.js"></script>
 	<script src="js/common.js"></script>
+	<script src="js/bootstrap-datepicker.js"></script>
 	
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/bootstrap-responsive.css" rel="stylesheet">
 	<link href="css/bootstrap-responsive.min.css" rel="stylesheet">
 	<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/datepicker.css" rel="stylesheet">
 
 	<link href="css/threads.css" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
+    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 
 
 
@@ -60,7 +66,7 @@
 					<a  id="drop1" role="button" class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="#">&nbsp;<p  id="loggedUser">Usernname</p>&nbsp;<i class="icon-user icon-white"></i></a>
 					<ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
 						<li>
-							<a href="#" tabindex="-1">Profile</a>
+							<a href="profile.php" tabindex="-1">Profile</a>
 						</li>
 						<li>
 							<a href="#" class="logoutLink">Logout</a>
@@ -77,7 +83,7 @@
 			<form class="navbar-search">
 				<div class="input-append">
 					<input class="span3" id="searchText" type="text" placeholder="Search Threads">
-					<a class="btn" href="#" rel="popover" id="threadSearch" data-placement="top" data-content="demo" data-orignal-title="popvoer"><i class="icon-search"></i></a>
+					<a class="btn" href="#" rel="popover" id="basicThreadSearhButton" data-placement="top" data-content="demo" data-orignal-title="popvoer"><i class="icon-search"></i></a>
 					<div class="popover fade bottom in" id="example">
 						<div class="arrow"></div>
 						<div class="popover-inner">
@@ -87,7 +93,7 @@
 							</div>
 						</div>
 					</div>
-					<a  rel="tooltip" data-toggle="modal" href="#filtersModal" data-original-title="Thread Search Filters" data-placement="bottom" class="btn">Advance Search</i></a>
+					<a  rel="tooltip" data-toggle="modal" href="#filtersModal" id="threadFilters" data-original-title="Thread Search Filters" data-placement="bottom" class="btn">Advance Search</i></a>
 						
 				</div>
 			</form>
@@ -125,6 +131,8 @@
 			</div> -->
 
 			<div class="span10" id="contentPane">
+				<div id="search_result_info"><a href="" id="clearSearchResult">clear search results</a></div>
+				
 				<!--Body content-->
 				<table class="table outer_table">
 					<thead><caption><ul class="breadcrumb pull-left">
@@ -239,7 +247,7 @@
 			</div>
 
 
-			<div class="span2" data-spy="affix"  id="rightPane">
+			<div class="span2"   id="rightPane">
 				<div id="tch">Top Threads</div>
 				<ul id="right_bar_nav_list">
 					<li id="right_bar_ref_listItem" class="right_bar_ref_listItems"><a id="right_bar_ref_link" target-row="cat:x" class="right_bar_nav_link">Cat 1</a></li>
@@ -312,12 +320,36 @@
 						<input type="text" id="tag_filter" placeholder="tag">
 					</div>
 				</div>
+				
+				
+				<div class="control-group">
+					<label class="control-label">From</label>
+					<div class="controls">
+						<div class="input-append date " id="dp1" data-date="2012-12-02" data-date-format="yyyy-mm-dd">
+						  <input class="span2 datepicker" id="from_date" size="16" type="text" value="2012-12-02" >
+						</div>
+					</div>
+				</div>
+				
+				
+				<div class="control-group">
+					<label class="control-label">To</label>
+					<div class="controls">
+						<div class="input-append date " id="dp2" data-date="2012-12-02" data-date-format="yyyy-mm-dd">
+						  <input class="span2 datepicker" id="to_date" size="16" type="text" value="2012-12-02">
+						</div>
+					</div>
+				</div>
+				
+			
+				
+			
 			</form>
 				
 		</div>
 		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-			<a href="#" class="btn btn-primary">Search</a>
+			<a href="#" class="btn" data-dismiss="modal" id="dismissFilters">Cancel</a>
+			<a href="#" class="btn btn-primary" id="advancedThreadSearch">Search</a>
 		</div>
 	</div>
 		
@@ -408,7 +440,8 @@
 		
 		
 
-
+			
+ 
 
 		</body>
 		</html>

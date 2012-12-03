@@ -40,6 +40,25 @@ p
 
 }
 
+ #search_result_info
+ {
+	 border: 1px solid #e2c822;  
+	 background-color: gray;
+	 padding: 5px;
+	 margin: 5px;
+	 background-color: #fff9d7;
+	 text-align: center;
+/*	 display: inline-block;*/
+	 position: relative;
+	 margin-left: auto;
+	 margin-right: auto;
+	 text-align: right;
+
+	 display: none;
+	 
+ 	
+ }
+
 #sidebar{
 	height: 500px;
 }

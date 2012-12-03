@@ -7,6 +7,7 @@ $("document").ready(
 		
 		 $("#ref").hide();
 		 $("#right_bar_ref_listItem").hide();
+		 $("#search_result_info").hide();
 		//Get logged in userinfo
 		
 		$.ajax({
@@ -132,20 +133,22 @@ $("document").ready(
 		
 		
 		
-		//onload get all categories
-		$.ajax({
-			type: "POST",
-			url: "categoriesRepository.php",
-			async: false,
-			data: { eventType: "getAllCategories" },
-		}).done(function(data){
-			var categories = jQuery.parseJSON(data);
-			//categories.sort(cfunc );
-			
-			allCategories = categories;
-			layoutRows(categories);
-			
-		});
+		// //onload get all categories
+		// $.ajax({
+		// 	type: "POST",
+		// 	url: "categoriesRepository.php",
+		// 	async: false,
+		// 	data: { eventType: "getAllCategories" },
+		// }).done(function(data){
+		// 	var categories = jQuery.parseJSON(data);
+		// 	//categories.sort(cfunc );
+		// 	
+		// 	allCategories = categories;
+		// 	layoutRows(categories);
+		// 	
+		// });
+		
+		onLoadGetAllCategories();
 		
 		$('.dropdown-toggle').dropdown(); 
 		$('[rel=tooltip]').tooltip(); 
@@ -252,6 +255,25 @@ $("document").ready(
 			
 			 // $("#ref").hide();
 			
+			
+		}
+		
+		
+		function onLoadGetAllCategories()
+		{
+			$.ajax({
+				type: "POST",
+				url: "categoriesRepository.php",
+				async: false,
+				data: { eventType: "getAllCategories" },
+			}).done(function(data){
+				var categories = jQuery.parseJSON(data);
+				//categories.sort(cfunc );
+			
+				allCategories = categories;
+				layoutRows(categories);
+			
+			});
 			
 		}
 		
@@ -444,6 +466,110 @@ $("document").ready(
 			
 			
 		}
+		
+		
+		
+		/* Search related fuctionalities*/
+		
+		
+		$("#catSearch").live('click',function(event)
+		{
+			event.preventDefault();
+			
+			//check if keyword is valid
+			var searchKey = $("#searchText").val();
+			
+			
+			if(searchKey.length>0)
+			{
+				//setup post parameters
+				var params = new Object();
+				params.eventType = 'basicSearchForKey';
+				params.key = searchKey;
+				
+				//do search
+				$.ajax({
+					type: "POST",
+					url: "categoriesRepository.php",
+					async: false,
+					data: params,
+				}).done(function(data){
+					
+					if(data)
+					{
+						var categories = jQuery.parseJSON(data);
+						if(categories.length>0)
+						{
+							$("#search_result_info").show();
+							allCategories = categories;
+							layoutRows(categories);
+						}
+					}
+			
+				});
+				
+				
+			}
+			
+		
+		});
+		
+		
+		/* Clear search Results*/
+		$("#search_result_info").live('click',function(event){
+			event.preventDefault();
+			$("#search_result_info").hide();
+			onLoadGetAllCategories();
+		});
+		
+		
+		
+		/* Advanced category search*/
+		$("#catAdvancedSearch").live('click',function(event){
+			event.preventDefault();
+			
+			//get values in search filters
+			
+			var userkey = $("#user_filter").val();
+			var keyword = $("#keyword_filter").val();
+			
+			if(userkey.length>0 || keyword.length>0)
+			//either of the filter values are entered
+			{
+				
+				
+				var params = new Object();
+				params.eventType = 'advanceSearchForAttributes';
+				params.key = keyword;
+				params.creator = userkey
+				
+				//do search
+				$.ajax({
+					type: "POST",
+					url: "categoriesRepository.php",
+					async: false,
+					data: params,
+				}).done(function(data){
+					
+					if(data)
+					{
+						var categories = jQuery.parseJSON(data);
+						if(categories.length>0)
+						{
+							$("#search_result_info").show();
+							allCategories = categories;
+							layoutRows(categories);
+						}
+					}
+				});
+				
+				$("#catAdvancedSearchCancelButton").click();
+				
+			}
+		});
+		
+		
+		
 
 	}
 );

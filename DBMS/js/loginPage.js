@@ -51,10 +51,10 @@ $("document").ready(function(){
 		
 	});
 	
-	$("#forgotPasswordButton").click(function(){
+	/*$("#forgotPasswordButton").click(function(){
 
 		console.log("forgot password clicked");
-	});
+	});*/
 	
 
 });

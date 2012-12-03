@@ -6,7 +6,36 @@ session_start();
 // Include database connection settings
 include('dbconnect.php');
 
-// Retrieve username and password from database according to user's input
+//Retrieve the values from _POST
+
+$username=$_POST["username"];
+$firstname=$_POST["firstname"];
+$lastname=$_POST["lastname"];
+$email=$_POST["email"];
+$password=$_POST["password"];
+date_default_timezone_set('America/Indianapolis');
+$currDateTime = date('Y-m-d H:i:s');
+
+/*echo $username ." ";
+echo $firstname ." ";
+echo $lastname ." ";
+echo $email ." ";
+echo $password ." ";*/
+
+$query = "INSERT INTO User (username, firstname, lastname, emailid, password, datejoined, type) VALUES ('".$username."','".$firstname."','".$lastname."','".$email."','".$password."','".$currDateTime."','2')";
+
+$result = mysql_query($query);
+
+if (!$result) 
+				{
+					echo "Could not successfully run query ($sql) from DB: " . mysql_error();
+					exit;
+				}
+				else 
+				{
+					header( 'Location: index.php' ) ;
+				}
+/*// Retrieve username and password from database according to user's input
 $login = mysql_query("SELECT * FROM User WHERE (username = '" . mysql_real_escape_string($_POST['username']) . "') and (password = '" . mysql_real_escape_string($_POST['password']) . "')");
 
 if (mysql_num_rows($login) == 1) {
@@ -45,7 +74,6 @@ if (mysql_num_rows($login) == 1) {
 	
 
 //Update lastlogin
-	date_default_timezone_set('America/Indianapolis');
 	$currDateTime = date('Y-m-d H:i:s');
 	$updateQuery = "UPDATE User SET lastlogin = '$currDateTime' WHERE userid = $userid ";
 	$updateResult = mysql_query($updateQuery);
@@ -60,12 +88,12 @@ if (mysql_num_rows($login) == 1) {
 
 		
 	
-	header('Location: categories.php');
+	//header('Location: categories.php');
 }
 else {
 	// Jump to login page
-	 header('Location: index.php');
+	 //header('Location: index.php');
 
 }
-
+*/
 ?>

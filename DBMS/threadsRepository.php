@@ -106,6 +106,8 @@ function getThreadsForCategory($kCatId,$kUserId)
 function createNewThreadForCategory($kCatId,$kTitle,$kDesc,$kGroup,$kTags,$kGroupId)
 {
 	$result = json_encode(false);
+	//$currDateTime = date('Y-m-d');
+	date_default_timezone_set('America/Indianapolis');
 	$currDateTime = date('Y-m-d H:i:s');
 	$createrId = $_SESSION['userid'];
 	$query;
@@ -374,6 +376,195 @@ function sortByAttributeAndOrder($col,$order,$kCatId,$kUserId)
 	
 }
 
+
+
+	function basicThreadSearch($key,$kCatId,$kUserId)
+	{
+		
+		
+		$result = json_encode(false);
+		$query ;
+		if($kUserId==-1)
+			$query = "SELECT * from Thread WHERE categoryid = $kCatId AND title LIKE '%$key%'";
+		else
+			$query = "Select * from Thread WHERE ((groupid IS NULL OR groupid IN (SELECT group_id FROM user_group WHERE user_id = $kUserId)) AND categoryid = $kCatId) AND title LIKE '%$key%'";
+		$queryResult = mysql_query($query);
+		$allThreads = array();
+		if($queryResult!=NULL)
+		{
+			while($row = mysql_fetch_assoc($queryResult))
+			{
+				//get tags for this thread
+				$threadId = $row['threadid'];
+				//select keyword from Tag where tagid IN (Select tagid from tagtothread where threadid=61);
+				$tagSearchQuery = "select keyword from Tag where tagid IN (Select tagid from tagtothread where threadid = $threadId)";
+				$tagSearchQueryResult  = mysql_query($tagSearchQuery);
+				$alltags = array();
+				if(mysql_num_rows($tagSearchQueryResult))
+				{
+					//got some tags
+				
+					while($tagRow = mysql_fetch_assoc($tagSearchQueryResult))
+					{
+						//for each tag
+						$tag = $tagRow['keyword'];
+						//echo $tag;
+						array_push($alltags,$tag);
+					}
+				}
+				$row['tags'] = $alltags;
+			
+			
+			
+				//get creater info
+				$owner = $row['owner'];
+				$ownerSearchQuery = "Select * from User where userid = $owner";
+				$ownerSearchQueryResult = mysql_query($ownerSearchQuery);
+				if(mysql_num_rows($ownerSearchQueryResult)==1)
+				{
+					$user = mysql_fetch_assoc($ownerSearchQueryResult);
+					$row['owner'] = $user;
+				}
+			
+				//get group name
+				$groupId = $row['groupid'];
+				$row['groupName']= "no group";
+				if($groupId != NULL)
+				{
+					$groupQuery = "SELECT name from groups WHERE id = $groupId";
+					$groupQueryResult = mysql_query($groupQuery);
+					if(mysql_num_rows($groupQueryResult)==1)
+					{
+						$grp = mysql_fetch_assoc($groupQueryResult);
+						$row['groupName']= $grp['name'];
+					}	
+				
+				}
+			
+				//get number of posts in this thread
+				$numPostQuery = "Select COUNT(*) as numPost from Post WHERE threadid = $threadId";
+				$numPostQueryResutlt = mysql_query($numPostQuery);
+				if(mysql_num_rows($numPostQueryResutlt)==1)
+				{
+					$numPosts = mysql_fetch_assoc($numPostQueryResutlt);
+					$row['numPost']= $numPosts['numPost'];
+				
+				}
+			
+
+				array_push($allThreads,$row);
+			}
+			$result = json_encode($allThreads);
+		}
+		return $result;
+		
+		
+		
+	}
+
+
+
+
+	function advancedThreadSearch($key,$kCatId,$kUserId,$kUser,$ktag,$from,$to)
+	{
+		
+		
+		// Select * from Thread WHERE ((groupid IS NULL OR groupid IN (SELECT group_id FROM user_group WHERE user_id = 1)) AND categoryid = 1) AND (title LIKE '%testing%' OR owner IN (Select userid from User where username LIKE '%user%') OR threadid IN (Select threadid from tagtothread where `tagid` IN (SELECT Tag.`tagid` from Tag WHERE Tag.`keyword` LIKE '%mam%')) );
+		
+		
+		$result = json_encode(false);
+		$query ;
+		if($kUserId==-1)
+			$query = "SELECT * from Thread WHERE categoryid = $kCatId AND (`datecreated` between '$from' and '$to' OR  title LIKE '%$key%' OR owner IN (Select userid from User where username LIKE '%$kUser%') OR threadid IN (Select threadid from tagtothread where `tagid` IN (SELECT Tag.`tagid` from Tag WHERE Tag.`keyword` LIKE '%$ktag%')) )";
+		
+		
+		else
+			$query = "Select * from Thread WHERE ((groupid IS NULL OR groupid IN (SELECT group_id FROM user_group WHERE user_id = $kUserId)) AND categoryid = $kCatId) AND (`datecreated` between '$from' and '$to' OR title LIKE '%$key%' OR owner IN (Select userid from User where username LIKE '%$kUser%') OR threadid IN (Select threadid from tagtothread where `tagid` IN (SELECT Tag.`tagid` from Tag WHERE Tag.`keyword` LIKE '%$ktag%')) )";
+		
+		
+		
+		
+		
+		$queryResult = mysql_query($query);
+		$allThreads = array();
+		if($queryResult!=NULL)
+		{
+			while($row = mysql_fetch_assoc($queryResult))
+			{
+				//get tags for this thread
+				$threadId = $row['threadid'];
+				//select keyword from Tag where tagid IN (Select tagid from tagtothread where threadid=61);
+				$tagSearchQuery = "select keyword from Tag where tagid IN (Select tagid from tagtothread where threadid = $threadId)";
+				$tagSearchQueryResult  = mysql_query($tagSearchQuery);
+				$alltags = array();
+				if(mysql_num_rows($tagSearchQueryResult))
+				{
+					//got some tags
+				
+					while($tagRow = mysql_fetch_assoc($tagSearchQueryResult))
+					{
+						//for each tag
+						$tag = $tagRow['keyword'];
+						//echo $tag;
+						array_push($alltags,$tag);
+					}
+				}
+				$row['tags'] = $alltags;
+			
+			
+			
+				//get creater info
+				$owner = $row['owner'];
+				$ownerSearchQuery = "Select * from User where userid = $owner";
+				$ownerSearchQueryResult = mysql_query($ownerSearchQuery);
+				if(mysql_num_rows($ownerSearchQueryResult)==1)
+				{
+					$user = mysql_fetch_assoc($ownerSearchQueryResult);
+					$row['owner'] = $user;
+				}
+			
+				//get group name
+				$groupId = $row['groupid'];
+				$row['groupName']= "no group";
+				if($groupId != NULL)
+				{
+					$groupQuery = "SELECT name from groups WHERE id = $groupId";
+					$groupQueryResult = mysql_query($groupQuery);
+					if(mysql_num_rows($groupQueryResult)==1)
+					{
+						$grp = mysql_fetch_assoc($groupQueryResult);
+						$row['groupName']= $grp['name'];
+					}	
+				
+				}
+			
+				//get number of posts in this thread
+				$numPostQuery = "Select COUNT(*) as numPost from Post WHERE threadid = $threadId";
+				$numPostQueryResutlt = mysql_query($numPostQuery);
+				if(mysql_num_rows($numPostQueryResutlt)==1)
+				{
+					$numPosts = mysql_fetch_assoc($numPostQueryResutlt);
+					$row['numPost']= $numPosts['numPost'];
+				
+				}
+			
+	
+				array_push($allThreads,$row);
+			}
+			$result = json_encode($allThreads);
+		}
+		return $result;
+		
+		
+		
+		
+		
+		
+	}
+
+
+
+
 $reqType = $_POST['requestType'];
 $result = json_encode(false);
 switch($reqType)
@@ -442,6 +633,33 @@ switch($reqType)
 	$result = sortByAttributeAndOrder($col,$order,$catid,$userid);
 	break;
 	
+	
+	// var params.requestType = 'basicThreadSearch';
+	// var params.catId = String(param_val);
+	// var params.key = keyWord;
+	
+	
+	case 'basicThreadSearch':
+	$key = $_POST['key'];
+	$cat = $_POST['catId'];
+	$userId = (isset($_POST['userId']))?$_POST['userId']:-1;
+	$result = basicThreadSearch($key,$cat,$userId);
+	break;
+	
+	
+	// advancedThreadSearch($key,$kCatId,$kUserId,$kUser,$ktag)
+	
+	case 'advancedThreadSearch':
+	$key = (isset($_POST['key']))?$_POST['key']:'';
+	$kCatId = $_POST['catId'];
+	$kUser = (isset($_POST['user']))?$_POST['user']:'';
+	$ktag = (isset($_POST['tag']))?$_POST['tag']:'';
+	$kUserId = (isset($_POST['userId']))?$_POST['userId']:-1;
+	$from = (isset($_POST['from']))?$_POST['from']:'2000-1-1';
+	$to = (isset($_POST['to']))?$_POST['to']:'2050-1-1';
+	
+	$result = advancedThreadSearch($key,$kCatId,$kUserId,$kUser,$ktag,$from,$to);
+	break;
 		
 }
 

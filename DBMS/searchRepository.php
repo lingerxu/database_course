@@ -1,7 +1,7 @@
 <?php
 
 
-/* Controller for operations on threads page*/
+/* Controller for search operations on all pages*/
 
 session_start();
 
@@ -18,8 +18,6 @@ function searchThreadTitle($CatId,$term)
 		$query = "SELECT * from Thread where categoryid=".$CatId." and title like ('%".$term."%')";
 	else 
 		$query = "SELECT * from Thread where title like ('%".$term."%')";
-	//else
-		//$query = "Select * from Thread WHERE (groupid IS NULL OR groupid IN (SELECT group_id FROM user_group WHERE user_id = ".$kUserId.")) AND categoryid = ".$CatId." and lower(title) contains lower('".$term."')";
 	$queryResult = mysql_query($query);
 	$allThreads = array();
 	if($queryResult!=NULL)
@@ -28,7 +26,6 @@ function searchThreadTitle($CatId,$term)
 		{
 			//get tags for this thread
 			$threadId = $row['threadid'];
-			//select keyword from Tag where tagid IN (Select tagid from tagtothread where threadid=61);
 			$tagSearchQuery = "select keyword from Tag where tagid IN (Select tagid from tagtothread where threadid = $threadId)";
 			$tagSearchQueryResult  = mysql_query($tagSearchQuery);
 			$alltags = array();
@@ -45,8 +42,6 @@ function searchThreadTitle($CatId,$term)
 				}
 			}
 			$row['tags'] = $alltags;
-			
-			
 			
 			//get creater info
 			$owner = $row['owner'];
@@ -79,31 +74,30 @@ function searchThreadTitle($CatId,$term)
 	return $result;
 }
 
-
-function searchPostContents($CatId,$kUserId,$term)
+function searchPosts($searchRequest)
 {
 	$result = json_encode(false);
-	$query ;
-	if($kUserId==-1)
-		$query = "SELECT t.* from post as p, thread as t where t.categoryid=".$CatId." and t.threadid = p.threadid and lower(p.text) contains lower('".$term."') group by t.threadid";
-	else
-		$query = "Select t.* from post as p, thread as t WHERE (t.groupid IS NULL OR .tgroupid IN (SELECT t.group_id FROM user_group WHERE user_id = ".$kUserId.")) AND t.categoryid = ".$CatId." and lower(p.text) contains lower('".$term."') group by t.threadid";
+	$query = "SELECT * from Post where threadid = ".$searchRequest['threadId'];
+	if(!empty($searchRequest['user']))
+		$query = $query." AND createdby IN (select userid from User where username = '".$searchRequest['user']."')";
+	if(!empty($searchRequest['text']))
+		$query = $query." AND text like ('%".$searchRequest['text']."%')";
+	if(!empty($searchRequest['tag']))
+		$query = $query." AND postid IN (select tp.postid from tagtopost tp,tag t where tp.tagid = t.tagid and t.keyword='".$searchRequest['tag']."')";
 	$queryResult = mysql_query($query);
-	$allThreads = array();
+	$allPosts = array();
 	if($queryResult!=NULL)
 	{
-		while($row = mysql_fetch_assoc($queryResult))
-		{
-			//get tags for this thread
-			$threadId = $row['threadid'];
-			//select keyword from Tag where tagid IN (Select tagid from tagtothread where threadid=61);
-			$tagSearchQuery = "select keyword from Tag where tagid IN (Select tagid from tagtothread where threadid = $threadId)";
+		while($row = mysql_fetch_assoc($queryResult)){
+			$postId = $row['postid'];
+			
+			$tagSearchQuery = "select keyword from Tag where tagid IN (Select tagid from tagtopost where postid = $postId)";
 			$tagSearchQueryResult  = mysql_query($tagSearchQuery);
 			$alltags = array();
 			if(mysql_num_rows($tagSearchQueryResult))
 			{
 				//got some tags
-				
+					
 				while($tagRow = mysql_fetch_assoc($tagSearchQueryResult))
 				{
 					//for each tag
@@ -113,36 +107,13 @@ function searchPostContents($CatId,$kUserId,$term)
 				}
 			}
 			$row['tags'] = $alltags;
-			
-			
-			
-			//get creater info
-			$owner = $row['owner'];
-			$ownerSearchQuery = "Select * from User where userid = $owner";
-			$ownerSearchQueryResult = mysql_query($ownerSearchQuery);
-			if(mysql_num_rows($ownerSearchQueryResult)==1)
-			{
-				$user = mysql_fetch_assoc($ownerSearchQueryResult);
-				$row['owner'] = $user;
-			}
-			
-			//get group name
-			$groupId = $row['groupid'];
-			if($groupId != NULL)
-			{
-				$groupQuery = "SELECT name from groups WHERE id = $groupId";
-				$groupQueryResult = mysql_query($groupQuery);
-				if(mysql_num_rows($groupQueryResult)==1)
-				{
-					$grp = mysql_fetch_assoc($groupQueryResult);
-					$row['groupName']= $grp['name'];
-				}	
 				
-			}
-
-			array_push($allThreads,$row);
+			array_push($allPosts,$row);
+				
 		}
-		$result = json_encode($allThreads);
+			
+			
+		$result = json_encode($allPosts);
 	}
 	return $result;
 }
@@ -346,26 +317,21 @@ function searchTag($CatId,$kUserId,$term)
 	return $result;
 }
 
-//$CatId = $_POST['catId'];
-//$term = $_POST['term'];
 $requestType = $_POST['requestType'];
-//$kUserId= $_SESSION['userid'];
 $result = json_encode(false);
 switch($requestType)
 {
 	
 	case 'threadTitle':
-//	case '1':
 	$searchText = urldecode($_POST['searchText']);
 	$catId = $_POST['catId'];
 	$result = searchThreadTitle($catId,$searchText);
 	break;
 	
-	
-//	case 'postContent':
-	case '2':
-	$term = $_POST['term'];
-	$result = searchPostContents($CatId,$kUserId,$term);
+	case 'searchPosts':
+	$searchRequest = $_POST['searchRequest'];
+	//$result = searchPostContents($CatId,$kUserId,$term);
+	$result = searchPosts($searchRequest);
 	break;
 	
 //	case 'firstPostContent':
