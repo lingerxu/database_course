@@ -30,11 +30,15 @@ function compare_count($a, $b) {
   return $a_count > $b_count ? 1 : -1;
 }
 
-function get_top_categories()
+function get_top_categories($time = null)
 {
 
 	$jsonString = json_encode("failure");
-	$topCategoryIDsQuery  = "select * from stats_category where update_time = (select max(update_time) from stats_category);";
+  if ($time) {
+    $topCategoryIDsQuery  = "select * from stats_category where update_time = (select max(update_time) from stats_category where update_time < STR_TO_DATE('".$time."', '%Y-%m-%d %H:%i:%s'))";
+  } else {
+    $topCategoryIDsQuery  = "select * from stats_category where update_time = (select max(update_time) from stats_category);";
+  }
 	$topCategoryIDsResult = mysql_query($topCategoryIDsQuery);
 	if($topCategoryIDsResult==NULL) {
 		die("Error fetching all Categories".mysql_error());
@@ -64,10 +68,14 @@ function get_top_categories()
 	return $jsonString;
 }
 
-function get_top_posts()
+function get_top_posts($time = null)
 {
 	$response = json_encode("failure");
-	$top_post_ids_query  = "select * from stats_post_vote where update_time = (select max(update_time) from stats_post_vote);";
+  if ($time) {
+    $top_post_ids_query  = "select * from stats_post_vote where update_time = (select max(update_time) from stats_post_vote where update_time < STR_TO_DATE('".$time."', '%Y-%m-%d %H:%i:%s'))";
+  } else {
+	  $top_post_ids_query  = "select * from stats_post_vote where update_time = (select max(update_time) from stats_post_vote);";
+  }
 	$top_category_ids_result = mysql_query($top_post_ids_query);
 	if($top_category_ids_result==NULL) {
 		die("Error fetching top posts:".mysql_error());
@@ -97,11 +105,15 @@ function get_top_posts()
 	return $response;
 }
 
-function get_top_threads_by_vote()
+function get_top_threads_by_vote($time = null)
 {
 	$response = json_encode("failure");
-	$top_thread_ids_query  = "select * from stats_thread_vote where update_time = (select max(update_time) from stats_thread_vote);";
-	$top_thread_ids_result = mysql_query($top_thread_ids_query);
+  if ($time) {
+    $top_thread_ids_query  = "select * from stats_thread_vote where update_time = (select max(update_time) from stats_thread_vote where update_time < STR_TO_DATE('".$time."', '%Y-%m-%d %H:%i:%s'))";
+  } else {
+	  $top_thread_ids_query  = "select * from stats_thread_vote where update_time = (select max(update_time) from stats_thread_vote);";
+  }
+    $top_thread_ids_result = mysql_query($top_thread_ids_query);
 	if($top_thread_ids_result==NULL) {
 		die("Error fetching top posts:".mysql_error());
 	} else {
@@ -130,10 +142,14 @@ function get_top_threads_by_vote()
 	return $response;
 }
 
-function get_top_threads_by_view()
+function get_top_threads_by_view($time = null)
 {
 	$response = json_encode("failure");
-	$top_thread_ids_query  = "select * from stats_thread_view where update_time = (select max(update_time) from stats_thread_view);";
+  if ($time) {
+    $top_thread_ids_query  = "select * from stats_thread_view where update_time = (select max(update_time) from stats_thread_view where update_time < STR_TO_DATE('".$time."', '%Y-%m-%d %H:%i:%s'))";
+  } else {
+	  $top_thread_ids_query  = "select * from stats_thread_view where update_time = (select max(update_time) from stats_thread_view);";
+  }
 	$top_thread_ids_result = mysql_query($top_thread_ids_query);
 	if($top_thread_ids_result==NULL) {
 		die("Error fetching top posts:".mysql_error());
@@ -163,10 +179,14 @@ function get_top_threads_by_view()
 	return $response;
 }
 
-function get_top_users()
+function get_top_users($time = null)
 {
 	$response = json_encode("failure");
-	$top_user_ids_query  = "select * from stats_user_post where update_time = (select max(update_time) from stats_user_post);";
+  if ($time) {
+    $top_user_ids_query  = "select * from stats_user_post where update_time = (select max(update_time) from stats_user_post where update_time < STR_TO_DATE('".$time."', '%Y-%m-%d %H:%i:%s'))";
+  } else {
+	  $top_user_ids_query  = "select * from stats_user_post where update_time = (select max(update_time) from stats_user_post);";
+  }
 	$top_user_ids_result = mysql_query($top_user_ids_query);
 	if($top_user_ids_result==NULL) {
 		die("Error fetching top posts:".mysql_error());
@@ -191,21 +211,71 @@ function get_top_users()
 	return $response;
 }
 
+function get_top_users_by_vote($time = null)
+{
+	$response = json_encode("failure");
+  if ($time) {
+    $top_user_ids_query  = "select * from stats_user_votes where update_time = (select max(update_time) from stats_user_votes where update_time < STR_TO_DATE('".$time."', '%Y-%m-%d %H:%i:%s'))";
+  } else {
+	  $top_user_ids_query  = "select * from stats_user_votes where update_time = (select max(update_time) from stats_user_votes);";
+  }
+	$top_user_ids_result = mysql_query($top_user_ids_query);
+	if($top_user_ids_result==NULL) {
+		die("Error fetching top posts:".mysql_error());
+	} else {
+    $top_users_id_count_map = array();
+    while ($user_id_row = mysql_fetch_assoc($top_user_ids_result)) {
+      $top_users_id_count_map[$user_id_row['user_id']] = $user_id_row['vote_count'];
+    }
+    
+    $top_user_query = "select * from User where userid in (".join(",", array_keys($top_users_id_count_map)).")";
+		//Fetch all queries and encode in to json
+    $top_user_result = mysql_query($top_user_query);
+    $top_users = array();
+		while ($user_row = mysql_fetch_assoc($top_user_result)) {
+      $user_id = $user_row['userid'];
+			$user_row['num'] = $top_users_id_count_map[$user_id];
+			$top_users[] = $user_row;
+		}
+    usort($top_users, "compare_count");
+		$response = json_encode($top_users);
+	}
+	return $response;
+}
+
+function update_now() {
+  $response = "FAILURE";
+  $update_now_query = "CALL stats_update();";
+  $result = mysql_query($update_now_query);
+  if ($result) {
+    $response = "SUCCESS";
+  }
+  return $response;
+}
+
 function getUserInfo()
 {
 	return json_encode($_SESSION['username']);
 }
 
+$event = null;
+$time = null;
 if (isset($_POST["eventType"])) {
   $event = $_POST["eventType"];
 } else if (isset($_GET["eventType"])) {
   $event = $_GET["eventType"];
 }
 
+if (isset($_POST["time"])) {
+  $time = $_POST["time"];
+} else if (isset($_GET["time"])) {
+  $time = $_GET["time"];
+}
+
 $result = null;
 switch($event) {
 	case "getTopCategories":
-	  $result = get_top_categories();
+	  $result = get_top_categories($time);
 	  break;
 
 	case "getUserInfo":
@@ -213,19 +283,27 @@ switch($event) {
 	  break;
     
   case 'getTopPosts':
-    $result = get_top_posts();
+    $result = get_top_posts($time);
     break;
     
   case 'getTopThreadsByVote':
-    $result = get_top_threads_by_vote();
+    $result = get_top_threads_by_vote($time);
     break;
     
   case 'getTopThreadsByView':
-    $result = get_top_threads_by_view();
+    $result = get_top_threads_by_view($time);
     break;
     
   case 'getTopUsers':
-    $result = get_top_users();
+    $result = get_top_users($time);
+    break;
+    
+  case 'getTopUsersByVote':
+    $result = get_top_users_by_vote($time);
+    break;
+    
+  case 'updateNow':
+    $result = update_now();
     break;
 }
 

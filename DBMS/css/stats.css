@@ -121,3 +121,12 @@ th
  	word-wrap: break-word !important;
 	 
  }
+ 
+ .timeInputButton input {
+  margin-bottom: 10px;
+  margin-left: 10px;  
+}
+
+.timeInputHint {
+  color: #aaa;
+}

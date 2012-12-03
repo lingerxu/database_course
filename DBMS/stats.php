@@ -47,7 +47,11 @@
 
 						</ul>
 					</li>
-					<li class="divider-vertical"></li>				
+					<li class="divider-vertical"></li>
+          <li><a href="/DBMS/stats.php">Statistics</a></li>
+					<li class="divider-vertical"></li>
+          <li><a href="/DBMS/categories.php">About</a></li>
+					<li class="divider-vertical"></li>          
 				</ul>
 
 			</div>
@@ -66,12 +70,33 @@
 					<!--Body content-->
 					<table class="table">
 						<caption><ul class="breadcrumb pull-left">
-							<li>Home <span class="divider">/</span></li>
+							<li><a href="/DBMS/categories.php">Home</a> <span class="divider">/</span></li>
               <li>Statistics</li>
 						</ul></caption>
 
 						<thead>
+              <tr>
+                <th id="last_update_time">
+                  
+                </th>
+              </tr>
+              <tr>
+                <td>
+                  <input type="text" name="time" id="time_input" /><span class="timeInputButton"><input type="submit" value="Search" id="time_input_button"/></span>
+                  <br/>
+                  <span class="timeInputHint">Please enter time in the format of "2012-10-30 13:00"</span>
+                </td>
+              </tr>
 						</thead>
+            <thead>
+              <tr>
+                <th>
+                  <div><input type="submit" value="Update Now" id="update_now_button"/></div>
+                  <div id="updateNowLoadingIndicator"><img src="img/loading-indicator.gif"/></div>
+                  <div id="updateNowFailure">Cannot update statistics at the moment, please try again later.</div>
+                </th>
+              </tr>
+            <thead>
 						<tbody>
               <tr>
                 <th>Top Categories</th>
@@ -92,8 +117,14 @@
 												<td class="skeletonCol catThreadsCount">50 threads</td>
 												<td class="skeletonCol createdBy">created by:&nbsp;<span class="createdBySpan"></span></td>											
 											</tr>
+                      
 										</tbody>
 									</table>
+								</td>
+							</tr>
+              <tr class="tableRow" id="refNoData">
+								<td>
+									No Data
 								</td>
 							</tr>
 						</tbody>
@@ -196,7 +227,32 @@
 								</td>
 							</tr>
 						</tbody>
-					</table>
+            
+            <tbody>
+              <tr>
+                <th>Top Users by Votes</th>
+              </tr>
+              <tr id="userVoteLoadingIndicator">
+                <td><img src="img/loading-indicator.gif"/></td>
+              </tr>
+							<tr class="tableRow" id="refUserVote">
+								<td>
+									<table class="cellSkeleton">
+										<col width="150">
+                    <col width="150">
+                    <col width="100">
+										<tbody>
+											<tr class="userDesc">
+                        <td class="skeletonCol userLoginName">&lt;User Name&gt;</td>
+												<td class="skeletonCol userName">&lt;User Name&gt;</td>
+												<td class="skeletonCol userVoteCount">50 posts</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+  				</table>
 				</div>
 			</div>
 		</div>

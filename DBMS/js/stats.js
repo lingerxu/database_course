@@ -1,15 +1,40 @@
+
+
 $("document").ready(
 	function()
 	{
+    function parseURL( url ) {
+      var a = document.createElement('a');
+      a.href = url;
+      return a;
+    }
 		
 		 $("#refCategory").hide();
      $("#refPost").hide();
      $("#refThreadView").hide();
      $("#refThreadVote").hide();
      $("#refUser").hide();
+     $("#refUserVote").hide();
+     $("#refNoData").hide();
 		 $("#right_bar_ref_listItem").hide();
+     $("#update_now_button").hide();
+     $("#updateNowLoadingIndicator").hide();
+     $("#updateNowFailure").hide();
 		//Get logged in userinfo
-		
+
+		var currentURL = parseURL(window.location);
+    var time;
+    var queryTime;
+    if (currentURL.search) {
+      // search should be the format of '?time=xxx'
+      var timeStr = currentURL.search.slice(6).replace('_', ' ');
+      queryTime = timeStr ? new Date(timeStr + ':00') : undefined;
+      if (queryTime && queryTime.getDate()) {
+        time = timeStr;
+      }
+    }
+    
+    console.log(time);
 		$.ajax({
 			type: "POST",
 			url: "helpers.php",
@@ -25,7 +50,11 @@ $("document").ready(
 			}
 			else
 			{
-				//set username
+        // AI and Instructor can see update now button
+        if (userInfo.userType == "0" || userInfo.userType == "1") {
+          $("#update_now_button").show();
+        }
+        //set username
 				$("#loggedUser").html(userInfo.username);
 				$("#loggedUser").attr('userType',userInfo.userType);
 				$("#loggedUser").attr('userid',userInfo.userid);
@@ -33,12 +62,22 @@ $("document").ready(
 			}
 		});
     
+    // onload get last update time
+    var displayTime;
+    if (queryTime && queryTime.getDate()) {
+      displayTime = queryTime;
+    } else {
+      displayTime = new Date();
+    }
+    $("#last_update_time").html("Statistics for Time: " + displayTime.toUTCString());
+    
+    
 		//onload get top categories
 		$.ajax({
 			type: "GET",
 			url: "statsRepository.php",
 			async: true,
-			data: { eventType: "getTopCategories" },
+			data: { eventType: "getTopCategories", time: time },
 		}).done(function(data){
 			var categories = jQuery.parseJSON(data);
 			//categories.sort(cfunc );
@@ -51,7 +90,7 @@ $("document").ready(
 			type: "GET",
 			url: "statsRepository.php",
 			async: true,
-			data: { eventType: "getTopPosts" },
+			data: { eventType: "getTopPosts", time: time },
 		}).done(function(data){
       var posts = jQuery.parseJSON(data);
 			//console.log(posts);
@@ -62,7 +101,7 @@ $("document").ready(
 			type: "GET",
 			url: "statsRepository.php",
 			async: true,
-			data: { eventType: "getTopThreadsByView" },
+			data: { eventType: "getTopThreadsByView", time: time },
 		}).done(function(data){
       var threads = jQuery.parseJSON(data);
 			console.log(threads);
@@ -75,7 +114,7 @@ $("document").ready(
 			type: "GET",
 			url: "statsRepository.php",
 			async: true,
-			data: { eventType: "getTopThreadsByVote" },
+			data: { eventType: "getTopThreadsByVote", time: time },
 		}).done(function(data){
       var threads = jQuery.parseJSON(data);
 			console.log(threads);
@@ -88,13 +127,27 @@ $("document").ready(
 			type: "GET",
 			url: "statsRepository.php",
 			async: true,
-			data: { eventType: "getTopUsers" },
+			data: { eventType: "getTopUsers", time: time },
 		}).done(function(data){
       var users = jQuery.parseJSON(data);
       console.log('Top Users:');
 			console.log(users);
       layoutUserRows(users);
       $("#userLoadingIndicator").hide();
+		});
+    
+    //onload get top users by votes
+		$.ajax({
+			type: "GET",
+			url: "statsRepository.php",
+			async: true,
+			data: { eventType: "getTopUsersByVote", time: time },
+		}).done(function(data){
+      var users = jQuery.parseJSON(data);
+      console.log('Top Users:');
+			console.log(users);
+      layoutUserVoteRows(users);
+      $("#userVoteLoadingIndicator").hide();
 		});
 		
 		$('.dropdown-toggle').dropdown(); 
@@ -119,9 +172,45 @@ $("document").ready(
 			window.location = 'posts.php?threadId='+threadid+'&catId='+catid;
 		});
     
+    $("#time_input_button").live('click', function(event) {
+      var timeInput = $("#time_input").val();
+      var time = new Date(timeInput);
+      if (!time.getDate()) {
+        window.alert(timeInput + " is not a valid time format!");
+      } else {
+        var formatedTimeStr = time.getFullYear() + '-' + ((time.getMonth() + 101) + '').slice(1) + '-' + time.getDate() + '_' + time.getHours();
+        window.location = 'stats.php?time=' + formatedTimeStr;
+      }
+    });
+    
+    $("#update_now_button").live('click', function(event) {
+      $("#updateNowLoadingIndicator").show();
+      $("#updateNowFailure").hide();
+      $.ajax({
+        type: "POST",
+        url: "statsRepository.php",
+        async: true,
+        data: { eventType: "updateNow" },
+      }).done(function(data){
+        $("#updateNowLoadingIndicator").hide();
+        if (data == "SUCCESS") {
+          window.location = "stats.php";
+        } else {
+          $("#updateNowFailure").show();
+        }
+      });
+    });
+    
 		function layoutRows(categories)	
 		{
 			console.log(categories);
+      if (!categories.length) {
+				var cell = $("#refNoData").clone();
+				var cc = cell[0];
+        $(cc).show();
+				$(cc).insertAfter('#refCategory');
+        return;
+      }
 			for(var index in categories)
 			{
 				var cat = categories[index];
@@ -140,6 +229,13 @@ $("document").ready(
     
     function layoutThreadViewRows(threads) {
 			console.log(threads);
+      if (!threads.length) {
+				var cell = $("#refNoData").clone();
+				var cc = cell[0];
+        $(cc).show();
+				$(cc).insertAfter('#refThreadView');
+        return;
+      }
 			for(var index in threads)
 			{
 				var thread = threads[index];
@@ -159,6 +255,13 @@ $("document").ready(
     
     function layoutThreadVoteRows(threads) {
 			console.log(threads);
+      if (!threads.length) {
+				var cell = $("#refNoData").clone();
+				var cc = cell[0];
+        $(cc).show();
+				$(cc).insertAfter('#refThreadVote');
+        return;
+      }
 			for(var index in threads)
 			{
 				var thread = threads[index];
@@ -178,6 +281,13 @@ $("document").ready(
     
     function layoutUserRows(users) {
 			console.log(users);
+      if (!users.length) {
+				var cell = $("#refNoData").clone();
+				var cc = cell[0];
+        $(cc).show();
+				$(cc).insertAfter('#refUser');
+        return;
+      }
 			for(var index in users)
 			{
 				var user = users[index];
@@ -188,6 +298,28 @@ $("document").ready(
 				$(cc).find('.userPostCount').html(user.num+(parseInt(user.num)>1?" posts":" post"));
 				$(cc).show();
 				$(cc).insertAfter('#refUser');
+			}
+		}
+    
+    function layoutUserVoteRows(users) {
+			console.log(users);
+      if (!users.length) {
+				var cell = $("#refNoData").clone();
+				var cc = cell[0];
+        $(cc).show();
+				$(cc).insertAfter('#refUserVote');
+        return;
+      }
+			for(var index in users)
+			{
+				var user = users[index];
+				var cell = $("#refUserVote").clone();
+				var cc = cell[0];
+        $(cc).find(".userLoginName").html(user.username);
+				$(cc).find(".userName").html(user.firstname + ' ' + user.lastname);
+				$(cc).find('.userVoteCount').html(user.num+(parseInt(user.num)>1?" votes":" vote"));
+				$(cc).show();
+				$(cc).insertAfter('#refUserVote');
 			}
 		}
 	}
